@@ -16,17 +16,12 @@ const meta = [completed, typology].filter(Boolean).join(' · ');
 
 <article data-reveal style={`--i: ${index}`}>
   <a href={`/work/${project.id}`} class="group block">
-    <div
-      class:list={[
-        'frame aspect-[4/3] overflow-hidden',
-        cover_kind === 'drawing' ? 'bg-paper p-3' : 'bg-paper-sunk',
-      ]}
-    >
+    <div class="frame aspect-[4/3] overflow-hidden bg-paper p-3">
       <CmsImage
         src={cover}
         alt={title}
         class:list={[
-          'h-full w-full transition-opacity duration-300 group-hover:opacity-90',
+          'h-full w-full bg-paper-sunk transition-opacity duration-300 group-hover:opacity-90',
           cover_kind === 'drawing' ? 'object-contain' : 'object-cover',
         ]}
         aspect="4 / 3"
