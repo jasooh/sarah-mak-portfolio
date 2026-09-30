@@ -175,13 +175,19 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
     const ease = Math.min(dt * 2.6, 1);
+    /* Snap once close: these curves only approach their target, and a value
+       left just short of 1 leaves the last board unlaid. */
+    const step = (value: number, to: number) => {
+      const next = value + (to - value) * ease;
+      return Math.abs(to - next) < 0.0005 ? to : next;
+    };
 
-    burst += (target.burst - burst) * ease;
-    panelFade += (target.panels - panelFade) * ease;
-    turn += (target.turn - turn) * ease;
-    tilt += (target.tilt - tilt) * ease;
+    burst = step(burst, target.burst);
+    panelFade = step(panelFade, target.panels);
+    turn = step(turn, target.turn);
+    tilt = step(tilt, target.tilt);
     const previousZoom = zoom;
-    zoom += (target.zoom - zoom) * ease;
+    zoom = step(zoom, target.zoom);
     if (Math.abs(zoom - previousZoom) > 0.0002) resize();
 
     impulse *= Math.exp(-dt * 3);
