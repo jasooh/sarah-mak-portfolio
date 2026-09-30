@@ -8,6 +8,7 @@ instructor: Mauricio Quirós Pacheco
 cover: /src/assets/media/dsc02333.jpg
 cover_kind: photo
 featured: true
+order: 3
 draft: false
 ---
 Encapsulated between the longhouses and forest at Crawford Lake, this museum represents a body for light, memory, and spatial experience, expressed through the language of double-curvature forms and natural materials. From the moment visitors arrive at the parking lot, a path guides them toward the entrance, where a gentle lift of wooden slats marks the transition from the exterior landscape to the museum’s interior world. Upon entry, visitors are greeted by a grandiose atrium, one of two, that subtly echoes the form and spirit of the longhouses at Crawford Lake.
