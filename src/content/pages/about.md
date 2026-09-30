@@ -1,6 +1,6 @@
 ---
 title: About
-headline: ''
-portrait: ''
-portrait_alt: ''
+headline: headline
+portrait_alt: portrait alt text
 ---
+bio goes here (supports rich text)
