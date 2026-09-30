@@ -18,8 +18,8 @@ const meta = [completed, typology].filter(Boolean).join(' · ');
   <a href={`/work/${project.id}`} class="group block">
     <div
       class:list={[
-        'aspect-[4/3] overflow-hidden',
-        cover_kind === 'drawing' ? 'frame bg-paper' : 'bg-paper-sunk',
+        'frame aspect-[4/3] overflow-hidden',
+        cover_kind === 'drawing' ? 'bg-paper p-3' : 'bg-paper-sunk',
       ]}
     >
       <CmsImage
