@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import BuildingBackdrop from '../components/BuildingBackdrop.astro';
 import { getImage } from 'astro:assets';
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -33,10 +34,22 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    {/* Marks that scripting is available before first paint; the reveal
-        styles are scoped to this class, so content is never hidden without it. */}
+    {/* Runs before first paint: marks that scripting is available, so the
+        reveal styles never hide content without it, and records the current
+        route, which is what the wireframe backdrop keys its state off. */}
     <script is:inline>
       document.documentElement.classList.add('js');
+      (function () {
+        function setRoute() {
+          var path = location.pathname.replace(/\/+$/, '') || '/';
+          document.documentElement.dataset.route = path === '/' ? 'home' : path.split('/')[1];
+        }
+        setRoute();
+        if (!window.__routeBound) {
+          window.__routeBound = true;
+          document.addEventListener('astro:after-swap', setRoute);
+        }
+      })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
@@ -72,9 +85,10 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
   </head>
 
   <body class="flex min-h-screen flex-col">
+    <BuildingBackdrop transition:persist="backdrop" />
     <div class="grain" aria-hidden="true"></div>
     <SiteHeader />
-    <main class="flex-1">
+    <main class="relative z-10 flex-1">
       <slot />
     </main>
     <SiteFooter />

@@ -11,7 +11,7 @@ const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 
-<header class="rule">
+<header class="rule relative z-10">
   <div class="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-x-8 gap-y-3 px-6 py-6 md:px-10">
     <a href="/" class="group text-sm font-medium tracking-[0.12em] uppercase transition-colors hover:text-accent">
       {site.name}

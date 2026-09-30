@@ -1,0 +1,63 @@
+---
+/*
+  A wireframe building behind the content, after the exploded axonometric on
+  the portfolio's cover. Every floor is the same slab drawn at the origin and
+  placed by transform alone, so a route only has to change --gap and --lift
+  and the whole structure re-reads: stacked, exploded, or flattened to a plan.
+
+  Route state is set on <html data-route> in BaseLayout.
+*/
+const SLAB = 'M0,0 L103.9,60 L17.3,110 L-86.6,50 Z';
+const GRID = [
+  'M26,15 L-60.6,65',
+  'M-21.7,12.5 L82.3,72.5',
+  'M52,30 L-34.6,80',
+  'M-43.3,25 L60.6,85',
+  'M77.9,45 L-8.7,95',
+  'M-65,37.5 L39,97.5',
+];
+const ROOF = 'M0,-14 L128.2,60 L17.3,124 L-110.9,50 Z';
+const RIDGE = [
+  'M0,-14 L8.7,29',
+  'M128.2,60 L8.7,29',
+  'M17.3,124 L8.7,29',
+  'M-110.9,50 L8.7,29',
+];
+const COLUMNS: [number, number][] = [
+  [0, 0],
+  [103.9, 60],
+  [17.3, 110],
+  [-86.6, 50],
+];
+const FLOORS = [0, 1, 2, 3];
+---
+
+<div class="backdrop" aria-hidden="true">
+  <svg viewBox="-150 -230 340 400" fill="none" preserveAspectRatio="xMidYMid meet">
+    <g class="bld">
+      {
+        COLUMNS.map(([x, y]) => (
+          <line class="col" x1={x} y1={y} x2={x} y2={y - 60} />
+        ))
+      }
+
+      {
+        FLOORS.map((n) => (
+          <g class="floor" style={`--n: ${n}`}>
+            <path class="slab" d={SLAB} />
+            {GRID.map((d) => (
+              <path class="grid" d={d} />
+            ))}
+          </g>
+        ))
+      }
+
+      <g class="floor roof" style={`--n: ${FLOORS.length}`}>
+        <path class="slab" d={ROOF} />
+        {RIDGE.map((d) => (
+          <path class="grid ridge" d={d} />
+        ))}
+      </g>
+    </g>
+  </svg>
+</div>

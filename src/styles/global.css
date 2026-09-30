@@ -47,6 +47,9 @@
   /* Strength of the scanline grain over the page. */
   --grain: 0.028;
 
+  /* Wireframe backdrop: faint enough not to compete with body copy. */
+  --backdrop-alpha: 0.1;
+
   /* Motion follows the game's UI: fast and sharp, nothing over ~320ms. */
   --ease-sharp: cubic-bezier(0.2, 0, 0, 1);
   --dur-fast: 170ms;
@@ -64,6 +67,7 @@
     --accent: #e07a5f;
 
     --grain: 0.05;
+    --backdrop-alpha: 0.11;
   }
 }
 
@@ -76,7 +80,17 @@
   --accent: #e07a5f;
 
   --grain: 0.05;
+  --backdrop-alpha: 0.11;
 }
+
+/*
+  Per-route states for the backdrop. Each is a still drawing in its own right,
+  so the building reads correctly with motion disabled or scripting off.
+*/
+:root { --gap: 60px; --lift: 60px; --ridge: 0.45; }
+:root[data-route='work'] { --gap: 82px; --lift: 96px; --ridge: 0.45; }
+:root[data-route='about'] { --gap: 6px; --lift: -24px; --ridge: 0.12; }
+:root[data-route='cv'] { --gap: 30px; --lift: 18px; --ridge: 0.3; }
 
 @layer base {
   html {
@@ -109,6 +123,77 @@
 }
 
 @layer components {
+  /*
+    Wireframe building behind the content. --gap is the storey height and
+    --lift raises the stack, so each route restates the same structure: the
+    home page stacks it, /work explodes it as on the portfolio cover, /about
+    collapses it towards a plan, /cv compresses it to an elevation.
+
+    Kept faint enough to read as a drawing on the page rather than an image
+    behind the text; it never sits above content and never takes pointer
+    events.
+  */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    /* Let the drawing bleed off the right edge, as a margin drawing would. */
+    margin-right: -9vw;
+  }
+  .backdrop svg {
+    width: min(74vh, 58vw);
+    height: auto;
+    overflow: visible;
+    color: var(--ink);
+    opacity: var(--backdrop-alpha);
+  }
+
+  /* On a phone the building would sit directly under the text column. */
+  @media (width < 48rem) {
+    .backdrop {
+      margin-right: -28vw;
+    }
+    .backdrop svg {
+      width: 116vw;
+      opacity: calc(var(--backdrop-alpha) * 0.55);
+    }
+  }
+  .backdrop :where(.slab, .col, .grid) {
+    stroke: currentColor;
+    vector-effect: non-scaling-stroke;
+  }
+  .backdrop .slab {
+    stroke-width: 1.1;
+  }
+  .backdrop :where(.col, .grid) {
+    stroke-width: 0.7;
+  }
+  .backdrop .grid {
+    opacity: 0.45;
+  }
+
+  .backdrop .floor {
+    transform: translateY(calc(var(--n) * var(--gap, 60px) * -1));
+  }
+  .backdrop .col {
+    /* Columns are vertical on screen, so storey height scales them directly. */
+    transform: scaleY(calc(var(--gap, 60px) / 60px * 4));
+    transform-origin: 0 100%;
+  }
+  .backdrop .bld {
+    transform: translateY(var(--lift, 60px));
+  }
+
+  /* The roof loses its pitch as the building flattens. */
+  .backdrop .ridge {
+    opacity: var(--ridge, 0.45);
+  }
+
   /*
     Faint horizontal scanlines over the page — the YoRHa menu texture, dialled
     down until it reads as paper grain. Fixed and non-interactive.
@@ -321,6 +406,22 @@
 */
 
 @media (prefers-reduced-motion: no-preference) {
+  /*
+    The building restates itself over a slower, softer curve than the page
+    content: it is scenery, so it should settle after the text has arrived.
+  */
+  .backdrop .floor,
+  .backdrop .col,
+  .backdrop .bld,
+  .backdrop .ridge {
+    transition:
+      transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .backdrop .floor {
+    transition-delay: calc(var(--n) * 40ms);
+  }
+
   /* Old view drops out, new one rises in. */
   ::view-transition-old(root) {
     animation: yorha-exit var(--dur-fast) var(--ease-sharp) both;
