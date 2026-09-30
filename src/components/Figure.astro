@@ -25,11 +25,10 @@ const {
   zoomable = true,
 } = Astro.props;
 
-const isDrawing = kind === 'drawing';
 ---
 
 <figure class={className}>
-  <div class:list={[isDrawing ? 'frame bg-paper p-4' : 'bg-paper-sunk']}>
+  <div class="frame bg-paper p-4">
     <CmsImage
       src={src}
       alt={caption ?? ''}
