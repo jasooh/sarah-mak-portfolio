@@ -5,7 +5,12 @@ typology: Teahouse
 course: ARC487 Senior Seminar in Technology (Thesis)
 completed: May 2024
 instructor: Nicholas Hoban
+cover: /src/assets/media/title.png
 cover_kind: photo
+gallery:
+  - image: /src/assets/media/tools.png
+    caption: Traditional Japanese carpentry tools
+    kind: drawing
 featured: true
 order: 5
 draft: false
