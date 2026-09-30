@@ -145,7 +145,31 @@
     /* Let the drawing bleed off the right edge, as a margin drawing would. */
     margin-right: -9vw;
   }
+  /*
+    The canvas occupies the right of the viewport, where the SVG sits, so the
+    three.js building lands in the same place as the one it replaces.
+  */
+  .backdrop-gl {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 74%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 700ms ease;
+  }
+  .backdrop.is-gl .backdrop-gl {
+    /* Hardware 1px lines read fainter than the SVG's strokes, so lift them. */
+    opacity: calc(var(--backdrop-alpha) * 1.7);
+  }
+  /* Once WebGL has the building, the SVG steps aside. */
+  .backdrop.is-gl svg {
+    opacity: 0;
+    transition: opacity 500ms ease;
+  }
+
   .backdrop svg {
+    transition: opacity 500ms ease;
     width: min(74vh, 58vw);
     height: auto;
     overflow: visible;
@@ -161,6 +185,12 @@
     .backdrop svg {
       width: 116vw;
       opacity: calc(var(--backdrop-alpha) * 0.55);
+    }
+    .backdrop-gl {
+      width: 130%;
+    }
+    .backdrop.is-gl .backdrop-gl {
+      opacity: calc(var(--backdrop-alpha) * 0.9);
     }
   }
   .backdrop :where(.slab, .col, .grid) {

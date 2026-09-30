@@ -14,6 +14,7 @@ Pages.
 | Content | Astro content collections (Markdown + YAML) |
 | Editing | Pages CMS, hosted at [app.pagescms.org](https://app.pagescms.org) |
 | Images | `astro:assets` — responsive, converted to WebP at build time |
+| Backdrop | three.js wireframe building, lazy-loaded, with an SVG fallback |
 | Hosting | Cloudflare Pages |
 
 ## Commands

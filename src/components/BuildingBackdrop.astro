@@ -6,6 +6,11 @@
   and the whole structure re-reads: stacked, exploded, or flattened to a plan.
 
   Route state is set on <html data-route> in BaseLayout.
+
+  This SVG is the baseline. Where WebGL is available and motion is welcome, the
+  script below hands over to a three.js version of the same building that turns
+  slowly and re-settles on navigation; three is imported dynamically so it never
+  blocks first paint, and the SVG simply stays put if that import never lands.
 */
 const SLAB = 'M0,0 L103.9,60 L17.3,110 L-86.6,50 Z';
 const GRID = [
@@ -33,6 +38,7 @@ const FLOORS = [0, 1, 2, 3];
 ---
 
 <div class="backdrop" aria-hidden="true">
+  <canvas class="backdrop-gl"></canvas>
   <svg viewBox="-150 -230 340 400" fill="none" preserveAspectRatio="xMidYMid meet">
     <g class="bld">
       {
@@ -61,3 +67,39 @@ const FLOORS = [0, 1, 2, 3];
     </g>
   </svg>
 </div>
+
+<script>
+  (function () {
+    if (window.__backdrop) return;
+    window.__backdrop = true;
+
+    const host = document.querySelector('.backdrop');
+    const canvas = document.querySelector('.backdrop-gl');
+    if (!(host instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) return;
+
+    /* Reduced motion keeps the still SVG: a slowly turning building is exactly
+       the kind of ambient movement that setting asks us to drop. */
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (still.matches) return;
+
+    function routeName() {
+      const path = location.pathname.replace(/\/+$/, '') || '/';
+      return path === '/' ? 'home' : path.split('/')[1];
+    }
+
+    /* Deferred so the drawing never competes with content for the first paint. */
+    const idle = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 400));
+    idle(async () => {
+      try {
+        const { startBackdrop } = await import('../lib/backdrop');
+        const setRoute = startBackdrop(canvas);
+        if (!setRoute) return;
+        host.classList.add('is-gl');
+        setRoute(routeName());
+        document.addEventListener('astro:after-swap', () => setRoute(routeName()));
+      } catch {
+        /* The SVG is already on screen; nothing to undo. */
+      }
+    });
+  })();
+</script>
