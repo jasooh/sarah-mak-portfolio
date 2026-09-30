@@ -1,3 +1,4 @@
+pdf: /files/maksarahcv.pdf
 expertise:
   - name: Rhino
     duration: 6 years
@@ -14,14 +15,14 @@ expertise:
   - name: ArcGIS
     duration: 4 months
 academic:
-  - qualification: Architectural Studies, Bachelor of Arts
+  - qualification: Bachelor of Arts, Architectural Studies
     institution: University of Toronto
-    faculty: John H. Daniels Faculty of Architecture, Landscape, and Design
+    faculty: John H. Daniel’s Faculty of Architecture, Landscape, and Design
     start: September 2020
     end: June 2024
   - qualification: Masters of Architecture
     institution: University of Toronto
-    faculty: John H. Daniels Faculty of Architecture, Landscape, and Design
+    faculty: John H. Daniel’s Faculty of Architecture, Landscape, and Design
     start: September 2024
     end: Present
 activities:
@@ -31,7 +32,30 @@ activities:
     end: June 2024
 experience:
   - role: Architecture Assistant, Internship
-    organisation: Practice name
-    location: City
+    organisation: PARTISANS
+    location: Toronto, Ontario
     start: May 2023
     end: September 2023
+  - role: Teaching Assistant
+    organisation: John H. Daniel’s Faculty of Architecture, Landscape, and Design
+    location: Toronto, Ontario
+    start: September 2025
+    end: December 2025
+    notes: "ARC1022: Design Technology I"
+  - role: Teaching Assistant
+    organisation: John H. Daniel’s Faculty of Architecture, Landscape, and Design
+    location: Toronto, Ontario
+    start: January 2025
+    end: June 2025
+    notes: "ARC201: Design Studio II"
+  - role: CNC Lab Technologist Assistant
+    organisation: John H. Daniel’s Faculty of Architecture, Landscape, and Design
+    location: Toronto, Ontario
+    start: September 2024
+    end: Present
+    notes: Digital Fabrication Lab
+  - role: Architectural Assistant, Co-Op Student
+    organisation: AND Architecture Inc
+    location: Markham, Ontario
+    start: September 2018
+    end: January 2019
