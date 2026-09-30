@@ -1,5 +1,11 @@
 ---
 title: Between Planes
+typology: Community Centre
+location: Scadding Court Community Centre, Toronto, Ontario
+course: ARC2014 Comprehensive Building Project
+completed: April 2026
+instructor: Maria Denegri
+summary: "Collaborated with: Yashara Abeysinghe"
 cover_kind: photo
 featured: true
 draft: false
