@@ -10,6 +10,7 @@ interface Props {
   sizes?: string;
   priority?: boolean;
   class?: string;
+  zoomable?: boolean;
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   sizes,
   priority = false,
   class: className = '',
+  zoomable = true,
 } = Astro.props;
 
 const isDrawing = kind === 'drawing';
@@ -36,6 +38,7 @@ const isDrawing = kind === 'drawing';
       layout="full-width"
       sizes={sizes}
       priority={priority}
+      zoomable={zoomable}
     />
   </div>
 

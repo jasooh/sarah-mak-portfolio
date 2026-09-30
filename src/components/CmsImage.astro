@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { resolveImage } from '../lib/images';
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
   sizes?: string;
   loading?: 'lazy' | 'eager';
   priority?: boolean;
+  zoomable?: boolean;
 }
 
 const {
@@ -22,9 +23,15 @@ const {
   sizes,
   loading,
   priority = false,
+  zoomable = false,
 } = Astro.props;
 
 const image = resolveImage(src);
+
+const zoom =
+  zoomable && image && image.format !== 'svg'
+    ? await getImage({ src: image, width: Math.min(image.width, 2000) })
+    : undefined;
 
 if (src && !image) {
   console.warn(`[CmsImage] No file found in src/assets/media for "${src}".`);
@@ -41,6 +48,9 @@ if (src && !image) {
       sizes={sizes}
       loading={priority ? 'eager' : (loading ?? 'lazy')}
       fetchpriority={priority ? 'high' : undefined}
+      data-zoom={zoom?.src}
+      data-zoom-w={zoom?.attributes?.width ?? image.width}
+      data-zoom-h={zoom?.attributes?.height ?? image.height}
     />
   ) : (
     <div
