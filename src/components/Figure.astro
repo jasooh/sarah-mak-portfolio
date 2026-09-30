@@ -4,6 +4,8 @@ import CmsImage from './CmsImage.astro';
 interface Props {
   src?: string | null;
   caption?: string;
+  /** Falls back to the caption; set it when a figure has no caption. */
+  alt?: string;
   scale?: string;
   kind?: 'drawing' | 'photo';
   aspect?: string;
@@ -16,6 +18,7 @@ interface Props {
 const {
   src,
   caption,
+  alt,
   scale,
   kind = 'photo',
   aspect = '3 / 2',
@@ -31,8 +34,8 @@ const {
   <div class="frame bg-paper p-4">
     <CmsImage
       src={src}
-      alt={caption ?? ''}
-      class="w-full"
+      alt={alt ?? caption ?? ''}
+      class:list={['w-full', kind === 'drawing' ? 'object-contain' : 'object-cover']}
       aspect={aspect}
       layout="full-width"
       sizes={sizes}

@@ -43,4 +43,7 @@ Astro static site, Tailwind v4, content edited via Pages CMS (`.pages.yml`).
 - `src/lib/frame.ts` holds the backdrop geometry. Both renderers read it: the
   SVG in `BuildingBackdrop.astro` projects it isometrically, `src/lib/backdrop.ts`
   builds it in three.js. Change the model there, not in either renderer.
+- The `theme-color` meta tags in `BaseLayout.astro` repeat the `--paper` values
+  from `global.css`. CSS variables cannot be read from a meta tag, so a palette
+  change has to be made in both.
 - Run `npx astro check` and `npm run build` before considering a change done.
