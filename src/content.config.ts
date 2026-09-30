@@ -3,7 +3,7 @@ import { glob } from 'astro/loaders';
 import { list, text } from './lib/cms-schema';
 
 /*
-  The project fields mirror the metadata block in Sarah's printed portfolio:
+  Project fields mirror the metadata block in the printed portfolio:
 
     Typology:   Residential Building
     Location:   Toronto, Ontario
@@ -11,8 +11,8 @@ import { list, text } from './lib/cms-schema';
     Completed:  December 2025
     Instructor: Aleris Rodgers
 
-  Drawings there sit inside a hairline frame and photographs sit bare, so each
-  image carries the `kind` that decides which it gets.
+  Drawings sit inside a hairline frame and photographs sit bare, so each image
+  carries the `kind` that decides which treatment it receives.
 */
 
 /** `drawing` gets a hairline frame, `photo` sits bare. Anything else is a photo. */
@@ -31,13 +31,13 @@ const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string().min(1),
-    /** The smaller line under the title, e.g. "The Art of Japanese Joinery". */
+    /** The smaller line under the title. */
     subtitle: text(),
 
     typology: text(),
     location: text(),
     course: text(),
-    /** Free text, as printed: "December 2025", "May 2024". */
+    /** Free text, as printed: "December 2025". */
     completed: text(),
     instructor: text(),
 
@@ -49,7 +49,7 @@ const projects = defineCollection({
     gallery: list(galleryItem),
 
     featured: z.boolean().default(false),
-    /** Also the printed project number: 01, 02, 03… */
+    /** Also the printed project number. */
     order: z.number().nullish(),
     draft: z.boolean().default(false),
   }),

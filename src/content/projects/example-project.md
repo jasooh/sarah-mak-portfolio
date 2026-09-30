@@ -13,11 +13,3 @@ featured: true
 order: 1
 draft: false
 ---
-Replace this with the project description. Two or three paragraphs works well:
-the brief, the idea you were testing, and how the drawings and models answer it.
-
-## Approach
-
-Add headings if the write-up gets long. Images uploaded to the gallery appear
-below, each with a caption and an optional scale — set an image to "Drawing" to
-give it the hairline frame, or "Photograph" to let it sit bare.

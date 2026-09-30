@@ -1,13 +1,7 @@
 /*
-  Type follows Sarah's own portfolio, which is set entirely in a monospace
-  face with italic lowercase headings. That happens to sit well with the
-  YoRHa reference too — the game's logs and terminals read as fixed-width.
-
-  IBM Plex Mono has true italics (not slanted romans), which the headings
-  depend on. Latin subsets only, self-hosted, so no third-party request.
-
-  To go back to a proportional face, change --font-sans below; nothing else
-  refers to the family directly.
+  The printed portfolio is set entirely in a monospace face with italic
+  lowercase headings. IBM Plex Mono carries true italics rather than slanted
+  romans, which those headings depend on. Latin subsets only, self-hosted.
 */
 @import '@fontsource/ibm-plex-mono/latin-400.css';
 @import '@fontsource/ibm-plex-mono/latin-400-italic.css';
@@ -24,9 +18,9 @@
     --color-alert rgb(205,102,77)   terracotta accent
   Dark mode is the straight high/low inversion that theme uses.
 
-  Two deliberate departures: the page sits a little lighter than the original
-  sand so photography and drawings read cleanly against it, and secondary text
-  is darker than --color-mid, which only reaches 2.3:1 on this background. The
+  Two departures from it: the page sits lighter than the original sand so
+  photography and drawings read cleanly against it, and secondary text is
+  darker than --color-mid, which reaches only 2.3:1 on this background. The
   original mid tone is kept for hairlines, where contrast is not a legibility
   question.
 */
@@ -53,10 +47,7 @@
   /* Strength of the scanline grain over the page. */
   --grain: 0.028;
 
-  /*
-    Motion, following the game's UI: fast, sharp, mechanical. No bounce, no
-    spring, nothing over ~320ms. Menus there cascade rather than drift.
-  */
+  /* Motion follows the game's UI: fast and sharp, nothing over ~320ms. */
   --ease-sharp: cubic-bezier(0.2, 0, 0, 1);
   --dur-fast: 170ms;
   --dur: 280ms;
@@ -101,8 +92,7 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Nothing in the reference theme is rounded — border-radius: 0 appears in it
-     about a hundred times. Hard corners are the strongest single cue. */
+  /* Nothing in the reference theme is rounded. */
   * {
     border-radius: 0 !important;
   }
@@ -120,9 +110,8 @@
 
 @layer components {
   /*
-    Faint horizontal scanlines over the whole page — the YoRHa menu texture,
-    dialled down until it reads as paper grain rather than an effect. Fixed and
-    non-interactive, and it stays perfectly still: no animation to opt out of.
+    Faint horizontal scanlines over the page — the YoRHa menu texture, dialled
+    down until it reads as paper grain. Fixed and non-interactive.
   */
   .grain {
     position: fixed;
@@ -137,8 +126,8 @@
   }
 
   /*
-    Section and project headings, after Sarah's portfolio: italic lowercase,
-    semibold. Titles there read `terrace`, `expertise` — never title case.
+    Section and project headings follow the printed portfolio: italic
+    lowercase, semibold. Titles there read `terrace`, `expertise`.
   */
   .heading {
     @apply font-semibold text-ink;
@@ -147,17 +136,14 @@
   }
 
   /*
-    Her metadata blocks are plain `Key: Value` lines in the body face, at the
-    same weight and colour, with tight leading. No uppercase, no rules.
+    Metadata blocks are plain `Key: Value` lines in the body face, at the same
+    weight and colour, with tight leading.
   */
   .meta {
     @apply text-[0.8125rem] leading-[1.65] text-ink/85;
   }
 
-  /*
-    Figure captions read `Ground Floor Site Plan (scale 1:150)` — the name
-    upright, the scale in italic.
-  */
+  /* Captions read `Ground Floor Site Plan (scale 1:150)`: scale in italic. */
   .caption {
     @apply text-[0.75rem] leading-relaxed text-ink/75;
   }
@@ -166,16 +152,13 @@
     @apply text-muted;
   }
 
-  /* Uppercase tracked labels stay for the site chrome — nav, footer, counts. */
+  /* Uppercase tracked labels, used for site chrome: nav, footer, counts. */
   .label {
     @apply text-[0.6875rem] font-medium uppercase text-muted;
     letter-spacing: 0.2em;
   }
 
-  /*
-    The YoRHa double rule — one solid hairline with a lighter one just beneath.
-    Used under section headings and the site header.
-  */
+  /* Double rule: one solid hairline with a lighter one beneath. */
   .rule {
     position: relative;
     border-bottom: 1px solid var(--line);
@@ -206,7 +189,7 @@
     opacity: 0.45;
   }
 
-  /* Rotated square bullet, the menu marker from the game's UI. */
+  /* Rotated square bullet, after the game's menu marker. */
   .marker {
     position: relative;
     padding-left: 1.45em;
@@ -223,7 +206,7 @@
   }
 
   /*
-    Hairline frame with corner ticks, for image wells. The ticks are two
+    Hairline frame with corner ticks for image wells. The ticks are two
     L-shaped pseudo-elements on opposite corners.
   */
   .frame {
@@ -325,21 +308,20 @@
   ---------------------------------------------------------------------------
   Motion
   ---------------------------------------------------------------------------
-  Everything below is gated on `prefers-reduced-motion: no-preference`, so a
-  visitor who has asked for less motion gets the full page with no movement at
-  all — not a degraded one. Astro separately disables view transitions under
-  the same query with `!important`, so those are covered twice.
+  Everything below is gated on `prefers-reduced-motion: no-preference`: a
+  visitor who has asked for less motion gets the complete page with no
+  movement, not a degraded one. Astro disables view transitions under the same
+  query with `!important`.
 
-  The reveal rules are additionally scoped to `html.js`, set by an inline
-  script in the head. If the script never runs, nothing is ever hidden, so a
-  failed bundle can't leave the page blank.
+  The reveal rules are further scoped to `html.js`, set by an inline script in
+  the head, so a bundle that fails to load cannot leave the page blank.
 
-  The scanline grain stays deliberately still. Persistent ambient motion is
-  the one thing that would make this tiring to read against.
+  The scanline grain is static. Persistent ambient motion would make the page
+  tiring to read against.
 */
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Page-to-page: old view drops out fast, new one rises in. */
+  /* Old view drops out, new one rises in. */
   ::view-transition-old(root) {
     animation: yorha-exit var(--dur-fast) var(--ease-sharp) both;
   }
@@ -363,15 +345,15 @@
 
   /*
     Elements tagged `data-reveal` start hidden and are released by an
-    IntersectionObserver. `--i` sets the position in a cascade; the delay is
-    capped so a long list never leaves the last item waiting.
+    IntersectionObserver. `--i` sets position in the cascade; the delay is
+    capped so a long list never leaves its last item waiting.
   */
   html.js [data-reveal] {
     opacity: 0;
     transform: translateY(12px);
   }
 
-  /* Menu-style lists slide in from the left instead, as the game's do. */
+  /* Menu-style lists slide in from the left instead. */
   html.js [data-reveal='x'] {
     transform: translateX(-14px);
   }
@@ -385,7 +367,7 @@
     transition-delay: min(calc(var(--i, 0) * var(--stagger)), 400ms);
   }
 
-  /* Hover: a hairline that wipes in from the left, as menu rows do. */
+  /* Hairline that wipes in from the left on hover. */
   .wipe::after {
     content: '';
     position: absolute;
@@ -402,7 +384,7 @@
     transform: scaleX(1);
   }
 
-  /* A slow push on the card image, to separate hover from a flat state. */
+  /* Slow push on the card image to separate hover from the resting state. */
   .group:hover .frame :where(img, div) {
     transform: scale(1.02);
   }
@@ -410,10 +392,7 @@
     transition: transform 450ms var(--ease-sharp);
   }
 
-  /*
-    One-shot displacement, for the 404 only. The game glitches text when
-    something is wrong, which is exactly and only what this page is.
-  */
+  /* One-shot displacement, used only on the 404 page. */
   .glitch {
     animation: yorha-glitch 460ms steps(2, end) 1 both;
   }
@@ -428,7 +407,7 @@
   }
 }
 
-/* The hover wipe needs its positioning context in every motion setting. */
+/* The wipe needs its positioning context in every motion setting. */
 .wipe {
   position: relative;
 }

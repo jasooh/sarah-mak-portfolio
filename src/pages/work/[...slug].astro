@@ -30,7 +30,7 @@ const { project, number, previous, next } = Astro.props;
 const { title, subtitle, summary, cover, cover_kind, gallery } = project.data;
 const { Content } = await render(project);
 
-/* The metadata block, in the order it is printed in the portfolio. */
+/* The metadata block, in the order it is printed. */
 const facts = [
   ['Typology', project.data.typology],
   ['Location', project.data.location],
@@ -43,7 +43,7 @@ const facts = [
 <BaseLayout title={title} description={summary} image={cover}>
   <article>
     <header class="mx-auto max-w-6xl px-6 pt-12 md:px-10 md:pt-16">
-      {/* The running head from the printed spreads. */}
+      {/* Running head, after the printed spreads. */}
       <p data-reveal class="label">
         <a href="/work" class="wipe transition-colors hover:text-accent">Selected Works</a>
         <span class="mx-1.5 text-line">|</span>

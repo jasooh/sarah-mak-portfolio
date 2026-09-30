@@ -2,8 +2,8 @@ import { z } from 'astro/zod';
 
 /*
   Pages CMS writes cleared fields as an empty string, and YAML turns an empty
-  key into `null`. These helpers normalise both to `undefined` / `[]` so an
-  editor clearing a field never breaks the build.
+  key into `null`. These helpers normalise both to `undefined` / `[]`, so
+  clearing a field in the CMS cannot break the build.
 */
 
 /** Optional single-line or multi-line text; blank becomes `undefined`. */

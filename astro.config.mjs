@@ -5,18 +5,15 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // Update this to the production domain before launch. It is used for
-  // canonical URLs, Open Graph tags and the generated sitemap.
+  // Canonical URLs, Open Graph tags and the sitemap are all derived from this.
   site: 'https://sarah-mak-portfolio.pages.dev',
 
-  // Static output — deploys to Cloudflare Pages with no adapter.
   output: 'static',
 
   integrations: [sitemap()],
 
   image: {
-    // Responsive images by default: Astro emits the srcset/sizes and the
-    // matching styles, so <CmsImage> stays a one-liner at every call site.
+    // Astro emits the srcset, sizes and matching styles for every image.
     layout: 'constrained',
     responsiveStyles: true,
   },

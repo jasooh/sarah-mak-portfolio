@@ -1,8 +1,7 @@
 # Pages CMS configuration — https://pagescms.org/docs/configuration/
 #
-# Connect this repository at https://app.pagescms.org to edit everything below
-# in a browser. Images upload into src/assets/media so Astro can optimise them;
-# PDFs go to public/files and are served as-is.
+# Images are stored under src/assets/media so Astro can optimise them.
+# Documents are served unchanged from public/files.
 
 media:
   - name: images
@@ -324,15 +323,18 @@ content:
       - name: email
         label: Email
         type: string
+        description: Shown in the footer and on the about page.
         pattern:
           regex: '^$|^[^@\s]+@[^@\s]+\.[^@\s]+$'
           message: Enter a valid email address.
       - name: location
         label: Location
         type: string
+        description: Shown in the footer.
       - name: social
         label: Social links
         type: object
+        description: Shown in the footer.
         list:
           collapsible:
             collapsed: true
@@ -366,6 +368,7 @@ content:
       - name: footer_note
         label: Footer note
         type: string
+        description: Optional line after the copyright notice.
 
 settings:
   commit:

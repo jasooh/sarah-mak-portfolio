@@ -10,7 +10,7 @@ import { site } from '../lib/site';
 interface Props {
   title?: string;
   description?: string;
-  /** Social share image, as a CMS path (e.g. /src/assets/media/cover.jpg). */
+  /** Social share image, as a CMS path. */
   image?: string;
 }
 
@@ -20,8 +20,8 @@ const pageTitle = title ? `${title} — ${site.name}` : `${site.name}${site.role
 const pageDescription = description ?? site.seo.description ?? site.tagline;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 
-// Resize the share image rather than linking the original — a full-resolution
-// render is far past what the social platforms will fetch.
+// Resized rather than linked at full resolution, which is past what the
+// social platforms will fetch.
 const source = resolveImage(image ?? site.seo.image);
 const shareImage = source
   ? await getImage({ src: source, width: 1200, height: 630, fit: 'cover', format: 'jpeg' })
@@ -33,6 +33,8 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    {/* Marks that scripting is available before first paint; the reveal
+        styles are scoped to this class, so content is never hidden without it. */}
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
@@ -104,7 +106,7 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
 
       initReveals();
       // after-swap fires as soon as the new DOM is in place, so the cascade
-      // runs *during* the page transition rather than after it finishes.
+      // overlaps the page transition rather than queueing behind it.
       document.addEventListener('astro:after-swap', initReveals);
       document.addEventListener('astro:page-load', initReveals);
     </script>
