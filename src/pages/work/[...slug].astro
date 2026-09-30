@@ -68,7 +68,8 @@ const facts = [
     {
       layout === 'wide' && (
         <div data-reveal class="mx-auto mt-12 max-w-6xl px-6 md:px-10">
-          <div class="frame aspect-[16/9] overflow-hidden bg-paper p-4">
+          <div class="frame bg-paper p-4">
+            <div class="aspect-[16/9] overflow-hidden">
             <CmsImage
               src={cover}
               alt={title}
@@ -81,7 +82,8 @@ const facts = [
               sizes="(min-width: 1024px) 72rem, 100vw"
               priority
               zoomable
-            />
+              />
+            </div>
           </div>
         </div>
       )
@@ -119,7 +121,8 @@ const facts = [
       {
         sideBySide ? (
           <div data-reveal style="--i: 1">
-            <div class="frame aspect-square overflow-hidden bg-paper p-4">
+            <div class="frame bg-paper p-4">
+              <div class="aspect-square overflow-hidden">
               <CmsImage
                 src={cover}
                 alt={title}
@@ -132,7 +135,8 @@ const facts = [
                 sizes="(min-width: 768px) 55vw, 100vw"
                 priority
                 zoomable
-              />
+                />
+              </div>
             </div>
           </div>
         ) : (
