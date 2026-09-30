@@ -19,9 +19,7 @@ content:
     type: collection
     path: src/content/projects
     format: yaml-frontmatter
-    filename:
-      template: '{primary}.md'
-      field: create
+    filename: '{primary}.md'
     view:
       fields: [title, typology, completed, featured, draft]
       primary: title
