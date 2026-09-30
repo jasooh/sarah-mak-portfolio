@@ -1,8 +1,8 @@
 name: Sarah Mak
 role: Architecture Student
 tagline: Architecture student working between drawing, model and site.
-intro: ''
-email: hello@example.com
+intro: Introduction here.
+email: sarahmak0825@gmail.com
 location: Toronto, Ontario
 social:
   - label: Instagram
@@ -11,5 +11,3 @@ social:
     url: https://linkedin.com/
 seo:
   description: Portfolio of Sarah Mak, architecture student.
-  image: ''
-footer_note: ''
