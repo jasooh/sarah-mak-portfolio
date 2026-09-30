@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   // Canonical URLs, Open Graph tags and the sitemap are all derived from this.
-  site: 'https://sarah-mak-portfolio.pages.dev',
+  site: 'https://sarah-mak-portfolio.abuyuanjustin.workers.dev',
 
   output: 'static',
 
