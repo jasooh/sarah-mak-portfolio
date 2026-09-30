@@ -26,7 +26,7 @@ export const SECTION = 1.5;
 
 const E = HALF - SECTION / 2;
 const POSTS = [-E, 0, E];
-const JOISTS = [-12, -6, 0, 6, 12];
+const JOISTS = [-9, 0, 9];
 const PLATFORM_X = 4;
 
 const members: Member[] = [];

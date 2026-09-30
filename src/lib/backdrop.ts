@@ -88,7 +88,8 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
   const scene = new Scene();
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
 
-  const lineMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.7 });
+  const lineMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.85 });
+  const secondaryMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.4 });
   const panelMaterial = new MeshBasicMaterial({ transparent: true, opacity: 0, side: DoubleSide });
 
   const frame = new Group();
@@ -97,7 +98,8 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
 
   const parts = MEMBERS.map((member) => {
     const part = memberMesh(member);
-    part.edges.material = lineMaterial;
+    const primary = member.kind === 'post' || member.kind === 'beam';
+    part.edges.material = primary ? lineMaterial : secondaryMaterial;
     frame.add(part.edges);
     return part;
   });
@@ -125,14 +127,16 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     ];
     const geometry = new BufferGeometry();
     geometry.setAttribute('position', new Float32BufferAttribute(p, 3));
-    const line = new LineSegments(geometry, lineMaterial);
+    const line = new LineSegments(geometry, secondaryMaterial);
     line.position.set(x, y, z);
     frame.add(line);
     return line;
   });
 
   function applyTheme() {
-    lineMaterial.color = inkColour();
+    const ink = inkColour();
+    lineMaterial.color = ink;
+    secondaryMaterial.color = ink;
     panelMaterial.color = panelColour();
   }
   applyTheme();

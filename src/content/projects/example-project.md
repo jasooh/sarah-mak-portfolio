@@ -5,10 +5,10 @@ location: Toronto, Ontario
 course: ARC2013 Integrated Urbanism Studio
 completed: December 2025
 instructor: Aleris Rodgers
-cover: /src/assets/media/nbmetadatacache.jpeg
+cover: /src/assets/media/1-125-iso.png
 cover_kind: drawing
 featured: true
-order: 1
+order: 2
 draft: false
 ---
 Toronto has implemented new Major Transit Station Areas which are spaces around transit stations designated for future growth, employment and housing that have become the premise of this studio. Anchored by the Gerrard–Carlaw MTSA intersection, my concept begins with a straightforward strategy: introduce infill buildings with improved setbacks, establish inter-block connections through enhanced or newly created laneways, and activate underused rear-yard spaces.
