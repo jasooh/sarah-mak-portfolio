@@ -1,11 +1,13 @@
 ---
 import { MEMBERS, PANELS, iso } from '../lib/frame';
 
-const lines = MEMBERS.map((m) => {
+const line = (m: (typeof MEMBERS)[number]) => {
   const [x1, y1] = iso(...m.a);
   const [x2, y2] = iso(...m.b);
   return `M${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)}`;
-});
+};
+const primary = MEMBERS.filter((m) => m.kind === 'post' || m.kind === 'beam').map(line);
+const secondary = MEMBERS.filter((m) => m.kind !== 'post' && m.kind !== 'beam').map(line);
 
 const quads = PANELS.map((p) => {
   const corners: [number, number, number][] = [
@@ -39,7 +41,10 @@ const box = [
       {quads.map((d) => <path d={d} />)}
     </g>
     <g class="frame-lines">
-      {lines.map((d) => <path d={d} />)}
+      {primary.map((d) => <path d={d} />)}
+    </g>
+    <g class="frame-lines frame-secondary">
+      {secondary.map((d) => <path d={d} />)}
     </g>
   </svg>
 </div>
