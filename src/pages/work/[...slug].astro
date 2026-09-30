@@ -85,7 +85,7 @@ const facts = [
       {
         cover && (
           <div data-reveal style="--i: 1">
-            <div class:list={[cover_kind === 'drawing' ? 'frame bg-paper p-4' : 'bg-paper-sunk']}>
+            <div class:list={['frame', cover_kind === 'drawing' ? 'bg-paper p-4' : 'bg-paper-sunk']}>
               <CmsImage
                 src={cover}
                 alt={title}
