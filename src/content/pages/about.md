@@ -1,6 +1,6 @@
 ---
-title: About
-headline: headline
-portrait_alt: portrait alt text
+title: materiality
+headline: ma·te·ri·al·i·ty
+portrait_alt: This portfolio defines materiality
 ---
-bio goes here (supports rich text)
+"The conscious selection, application, and sensory experience of building materials to define a structure's aesthetic, functional, and tactile character"
