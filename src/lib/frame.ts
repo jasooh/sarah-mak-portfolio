@@ -76,9 +76,11 @@ const shuffled = raw
   .map((panel, i) => ({ panel, key: Math.sin(i * 12.9898) * 43758.5453 % 1 }))
   .sort((a, b) => Math.abs(a.key) - Math.abs(b.key));
 
+/* Strictly below 1, so the last board is reached by an easing curve that
+   only approaches its target. */
 export const PANELS: Panel[] = shuffled.map(({ panel }, i) => ({
   ...panel,
-  order: shuffled.length === 1 ? 0 : i / (shuffled.length - 1),
+  order: i / shuffled.length,
 }));
 
 
