@@ -81,6 +81,17 @@ content:
               label: Photograph
             - name: drawing
               label: Drawing
+      - name: layout
+        label: Page layout
+        type: select
+        default: side
+        description: Where the cover sits. Ignored when no cover is set.
+        options:
+          values:
+            - name: side
+              label: Text left, cover right
+            - name: wide
+              label: Cover across the top
       - name: gallery
         label: Gallery
         type: object

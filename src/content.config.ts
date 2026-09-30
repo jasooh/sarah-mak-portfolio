@@ -27,6 +27,7 @@ const projects = defineCollection({
 
     cover: text(),
     cover_kind: imageKind(),
+    layout: text().transform((value) => (value === 'wide' ? 'wide' : 'side')),
     gallery: list(galleryItem),
 
     featured: z.boolean().default(false),

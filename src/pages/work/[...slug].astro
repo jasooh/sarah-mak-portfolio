@@ -30,6 +30,11 @@ const { project, number, previous, next } = Astro.props;
 const { title, subtitle, summary, cover, cover_kind, gallery } = project.data;
 const { Content } = await render(project);
 
+/* Without a cover there is no second column to fill, so the text takes the
+   page on its own rather than sitting in a narrow strip beside empty space. */
+const layout = cover ? project.data.layout : 'text';
+const sideBySide = layout === 'side';
+
 const facts = [
   ['Typology', project.data.typology],
   ['Location', project.data.location],
@@ -60,8 +65,33 @@ const facts = [
       }
     </header>
 
+    {
+      layout === 'wide' && (
+        <div data-reveal class="mx-auto mt-12 max-w-6xl px-6 md:px-10">
+          <div class="frame aspect-[16/9] overflow-hidden bg-paper p-4">
+            <CmsImage
+              src={cover}
+              alt={title}
+              class:list={[
+                'h-full w-full',
+                cover_kind === 'drawing' ? 'object-contain' : 'object-cover',
+              ]}
+              aspect="16 / 9"
+              layout="full-width"
+              sizes="(min-width: 1024px) 72rem, 100vw"
+              priority
+              zoomable
+            />
+          </div>
+        </div>
+      )
+    }
+
     <div
-      class="mx-auto mt-12 grid max-w-6xl gap-x-12 gap-y-10 px-6 md:grid-cols-[22rem_minmax(0,1fr)] md:px-10"
+      class:list={[
+        'mx-auto mt-12 grid max-w-6xl gap-x-12 gap-y-10 px-6 md:px-10',
+        sideBySide ? 'md:grid-cols-[22rem_minmax(0,1fr)]' : 'md:grid-cols-[14rem_minmax(0,1fr)]',
+      ]}
     >
       <div data-reveal>
         {
@@ -77,19 +107,26 @@ const facts = [
           )
         }
 
-        <div class="prose-page mt-8 text-left md:text-justify">
-          <Content />
-        </div>
+        {
+          sideBySide && (
+            <div class="prose-page mt-8 text-left md:text-justify">
+              <Content />
+            </div>
+          )
+        }
       </div>
 
       {
-        cover && (
+        sideBySide ? (
           <div data-reveal style="--i: 1">
-            <div class="frame bg-paper p-4">
+            <div class="frame aspect-square overflow-hidden bg-paper p-4">
               <CmsImage
                 src={cover}
                 alt={title}
-                class="w-full"
+                class:list={[
+                  'h-full w-full',
+                  cover_kind === 'drawing' ? 'object-contain' : 'object-cover',
+                ]}
                 aspect="1 / 1"
                 layout="full-width"
                 sizes="(min-width: 768px) 55vw, 100vw"
@@ -97,6 +134,10 @@ const facts = [
                 zoomable
               />
             </div>
+          </div>
+        ) : (
+          <div data-reveal style="--i: 1" class="prose-page text-left md:text-justify">
+            <Content />
           </div>
         )
       }
