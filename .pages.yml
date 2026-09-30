@@ -1,8 +1,4 @@
 # Pages CMS configuration — https://pagescms.org/docs/configuration/
-#
-# Images are stored under src/assets/media so Astro can optimise them.
-# Documents are served unchanged from public/files.
-
 media:
   - name: images
     label: Images
@@ -372,9 +368,6 @@ content:
 
 settings:
   commit:
-    # Attribute a collaborator's edits to them. Without this, writes by someone
-    # invited by email are committed under the GitHub App's identity, so the
-    # history cannot tell one editor from another.
     identity: user
     templates:
       create: 'content: add {filename}'

@@ -4,9 +4,7 @@ import CmsImage from './CmsImage.astro';
 interface Props {
   src?: string | null;
   caption?: string;
-  /** Printed in italic after the caption. */
   scale?: string;
-  /** Drawings get a hairline frame; photographs sit bare. */
   kind?: 'drawing' | 'photo';
   aspect?: string;
   sizes?: string;

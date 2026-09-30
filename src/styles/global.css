@@ -1,8 +1,4 @@
-/*
-  The printed portfolio is set entirely in a monospace face with italic
-  lowercase headings. IBM Plex Mono carries true italics rather than slanted
-  romans, which those headings depend on. Latin subsets only, self-hosted.
-*/
+/* IBM Plex Mono: true italics, which the headings depend on. */
 @import '@fontsource/ibm-plex-mono/latin-400.css';
 @import '@fontsource/ibm-plex-mono/latin-400-italic.css';
 @import '@fontsource/ibm-plex-mono/latin-500.css';
@@ -11,18 +7,9 @@
 @import "tailwindcss";
 
 /*
-  Palette taken from AccraZed/YoRHA-UI-BetterDiscord:
-    --color-high  rgb(218,212,187)  sand
-    --color-low   rgb(87,84,74)     warm grey ink
-    --color-mid   rgb(151,147,129)  hairline
-    --color-alert rgb(205,102,77)   terracotta accent
-  Dark mode is the straight high/low inversion that theme uses.
-
-  Two departures from it: the page sits lighter than the original sand so
-  photography and drawings read cleanly against it, and secondary text is
-  darker than --color-mid, which reaches only 2.3:1 on this background. The
-  original mid tone is kept for hairlines, where contrast is not a legibility
-  question.
+  Palette after AccraZed/YoRHA-UI-BetterDiscord. --muted is darker than that
+  theme's mid tone, which reaches only 2.3:1 here; the original is kept for
+  hairlines.
 */
 @theme inline {
   --font-sans: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -44,13 +31,10 @@
   --line: #979381;
   --accent: #cd664d;
 
-  /* Strength of the scanline grain over the page. */
   --grain: 0.028;
 
-  /* Wireframe backdrop: faint enough not to compete with body copy. */
   --backdrop-alpha: 0.1;
 
-  /* Motion follows the game's UI: fast and sharp, nothing over ~320ms. */
   --ease-sharp: cubic-bezier(0.2, 0, 0, 1);
   --dur-fast: 170ms;
   --dur: 280ms;
@@ -83,10 +67,7 @@
   --backdrop-alpha: 0.11;
 }
 
-/*
-  Per-route states for the backdrop. Each is a still drawing in its own right,
-  so the building reads correctly with motion disabled or scripting off.
-*/
+/* Backdrop states. Each reads correctly with motion or scripting off. */
 :root { --gap: 60px; --lift: 60px; --ridge: 0.45; }
 :root[data-route='work'] { --gap: 82px; --lift: 96px; --ridge: 0.45; }
 :root[data-route='about'] { --gap: 6px; --lift: -24px; --ridge: 0.12; }
@@ -106,7 +87,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Nothing in the reference theme is rounded. */
   * {
     border-radius: 0 !important;
   }
@@ -123,16 +103,7 @@
 }
 
 @layer components {
-  /*
-    Wireframe building behind the content. --gap is the storey height and
-    --lift raises the stack, so each route restates the same structure: the
-    home page stacks it, /work explodes it as on the portfolio cover, /about
-    collapses it towards a plan, /cv compresses it to an elevation.
-
-    Kept faint enough to read as a drawing on the page rather than an image
-    behind the text; it never sits above content and never takes pointer
-    events.
-  */
+  /* --gap is storey height, --lift raises the stack. */
   .backdrop {
     position: fixed;
     inset: 0;
@@ -145,10 +116,6 @@
     /* Let the drawing bleed off the right edge, as a margin drawing would. */
     margin-right: -9vw;
   }
-  /*
-    The canvas occupies the right of the viewport, where the SVG sits, so the
-    three.js building lands in the same place as the one it replaces.
-  */
   .backdrop-gl {
     position: absolute;
     top: 0;
@@ -159,10 +126,8 @@
     transition: opacity 700ms ease;
   }
   .backdrop.is-gl .backdrop-gl {
-    /* Hardware 1px lines read fainter than the SVG's strokes, so lift them. */
     opacity: calc(var(--backdrop-alpha) * 1.7);
   }
-  /* Once WebGL has the building, the SVG steps aside. */
   .backdrop.is-gl svg {
     opacity: 0;
     transition: opacity 500ms ease;
@@ -177,7 +142,6 @@
     opacity: var(--backdrop-alpha);
   }
 
-  /* On a phone the building would sit directly under the text column. */
   @media (width < 48rem) {
     .backdrop {
       margin-right: -28vw;
@@ -219,15 +183,10 @@
     transform: translateY(var(--lift, 60px));
   }
 
-  /* The roof loses its pitch as the building flattens. */
   .backdrop .ridge {
     opacity: var(--ridge, 0.45);
   }
 
-  /*
-    Faint horizontal scanlines over the page — the YoRHa menu texture, dialled
-    down until it reads as paper grain. Fixed and non-interactive.
-  */
   .grain {
     position: fixed;
     inset: 0;
@@ -240,25 +199,16 @@
     );
   }
 
-  /*
-    Section and project headings follow the printed portfolio: italic
-    lowercase, semibold. Titles there read `terrace`, `expertise`.
-  */
   .heading {
     @apply font-semibold text-ink;
     font-style: italic;
     letter-spacing: 0.005em;
   }
 
-  /*
-    Metadata blocks are plain `Key: Value` lines in the body face, at the same
-    weight and colour, with tight leading.
-  */
   .meta {
     @apply text-[0.8125rem] leading-[1.65] text-ink/85;
   }
 
-  /* Captions read `Ground Floor Site Plan (scale 1:150)`: scale in italic. */
   .caption {
     @apply text-[0.75rem] leading-relaxed text-ink/75;
   }
@@ -267,13 +217,11 @@
     @apply text-muted;
   }
 
-  /* Uppercase tracked labels, used for site chrome: nav, footer, counts. */
   .label {
     @apply text-[0.6875rem] font-medium uppercase text-muted;
     letter-spacing: 0.2em;
   }
 
-  /* Double rule: one solid hairline with a lighter one beneath. */
   .rule {
     position: relative;
     border-bottom: 1px solid var(--line);
@@ -304,7 +252,6 @@
     opacity: 0.45;
   }
 
-  /* Rotated square bullet, after the game's menu marker. */
   .marker {
     position: relative;
     padding-left: 1.45em;
@@ -320,10 +267,6 @@
     transform: rotate(45deg);
   }
 
-  /*
-    Hairline frame with corner ticks for image wells. The ticks are two
-    L-shaped pseudo-elements on opposite corners.
-  */
   .frame {
     position: relative;
     outline: 1px solid var(--line);
@@ -358,7 +301,6 @@
     opacity: 1;
   }
 
-  /* Long-form Markdown body copy (project descriptions, about, etc.). */
   .prose-page {
     @apply max-w-[68ch] text-[0.8125rem] leading-[1.85] text-ink/90;
   }
@@ -420,26 +362,11 @@
 }
 
 /*
-  ---------------------------------------------------------------------------
-  Motion
-  ---------------------------------------------------------------------------
-  Everything below is gated on `prefers-reduced-motion: no-preference`: a
-  visitor who has asked for less motion gets the complete page with no
-  movement, not a degraded one. Astro disables view transitions under the same
-  query with `!important`.
-
-  The reveal rules are further scoped to `html.js`, set by an inline script in
-  the head, so a bundle that fails to load cannot leave the page blank.
-
-  The scanline grain is static. Persistent ambient motion would make the page
-  tiring to read against.
+  Motion is gated on prefers-reduced-motion: no-preference. Reveals are also
+  scoped to html.js, so a script that fails to load cannot hide content.
 */
 
 @media (prefers-reduced-motion: no-preference) {
-  /*
-    The building restates itself over a slower, softer curve than the page
-    content: it is scenery, so it should settle after the text has arrived.
-  */
   .backdrop .floor,
   .backdrop .col,
   .backdrop .bld,
@@ -452,7 +379,6 @@
     transition-delay: calc(var(--n) * 40ms);
   }
 
-  /* Old view drops out, new one rises in. */
   ::view-transition-old(root) {
     animation: yorha-exit var(--dur-fast) var(--ease-sharp) both;
   }
@@ -474,17 +400,12 @@
     }
   }
 
-  /*
-    Elements tagged `data-reveal` start hidden and are released by an
-    IntersectionObserver. `--i` sets position in the cascade; the delay is
-    capped so a long list never leaves its last item waiting.
-  */
+  /* --i sets position in the cascade; the delay is capped. */
   html.js [data-reveal] {
     opacity: 0;
     transform: translateY(12px);
   }
 
-  /* Menu-style lists slide in from the left instead. */
   html.js [data-reveal='x'] {
     transform: translateX(-14px);
   }
@@ -498,7 +419,6 @@
     transition-delay: min(calc(var(--i, 0) * var(--stagger)), 400ms);
   }
 
-  /* Hairline that wipes in from the left on hover. */
   .wipe::after {
     content: '';
     position: absolute;
@@ -515,7 +435,6 @@
     transform: scaleX(1);
   }
 
-  /* Slow push on the card image to separate hover from the resting state. */
   .group:hover .frame :where(img, div) {
     transform: scale(1.02);
   }
@@ -523,7 +442,6 @@
     transition: transform 450ms var(--ease-sharp);
   }
 
-  /* One-shot displacement, used only on the 404 page. */
   .glitch {
     animation: yorha-glitch 460ms steps(2, end) 1 both;
   }
@@ -538,7 +456,6 @@
   }
 }
 
-/* The wipe needs its positioning context in every motion setting. */
 .wipe {
   position: relative;
 }

@@ -3,12 +3,6 @@ import siteRaw from '../data/site.yml?raw';
 import cvRaw from '../data/cv.yml?raw';
 import { list, text, z } from './cms-schema';
 
-/*
-  Global settings and the CV live in YAML so Pages CMS can edit them as single
-  files. Both are parsed and validated at build time, so a malformed value
-  fails the build with a readable path rather than rendering as "undefined".
-*/
-
 const siteSchema = z.object({
   name: z.string().min(1),
   role: text(),
@@ -32,16 +26,11 @@ const dateRange = {
   end: text(),
 };
 
-/*
-  Sections follow the CV page of the printed portfolio: expertise, academic
-  qualifications, activities and experience.
-*/
 const cvSchema = z.object({
   pdf: text(),
   expertise: list(
     z.object({
       name: z.string(),
-      /** As printed: "6 years". */
       duration: text(),
     }),
   ),
@@ -92,7 +81,6 @@ function load<T extends z.ZodType>(schema: T, raw: string, file: string): z.infe
 export const site = load(siteSchema, siteRaw, 'src/data/site.yml');
 export const cv = load(cvSchema, cvRaw, 'src/data/cv.yml');
 
-/** "2022 — 2024", or one side alone if the other is blank. */
 export function formatRange(start?: string, end?: string): string | undefined {
   if (start && end) return `${start} — ${end}`;
   return start ?? end;

@@ -5,7 +5,6 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // Canonical URLs, Open Graph tags and the sitemap are all derived from this.
   site: 'https://sarah-mak-portfolio.abuyuanjustin.workers.dev',
 
   output: 'static',
@@ -13,7 +12,6 @@ export default defineConfig({
   integrations: [sitemap()],
 
   image: {
-    // Astro emits the srcset, sizes and matching styles for every image.
     layout: 'constrained',
     responsiveStyles: true,
   },

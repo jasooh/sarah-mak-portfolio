@@ -10,25 +10,11 @@ import {
   WebGLRenderer,
 } from 'three';
 
-/*
-  The wireframe building, as line geometry. Drawn with an orthographic camera
-  so it reads as an axonometric drawing rather than a perspective render,
-  matching the drawings in the portfolio.
-
-  The SVG in BuildingBackdrop.astro is the same building and stays as the
-  fallback: this module only takes over once it has a context to draw into.
-*/
-
 const FLOORS = 4;
 const W = 2.2;
 const D = 1.8;
 const GRID = 4;
 
-/*
-  Per route: storey height, rotation offset, and a vertical nudge. The building
-  is anchored at its base, so an exploded stack and a flat plan need different
-  framing to sit in the same place on screen.
-*/
 const ROUTES: Record<string, { gap: number; turn: number; rise: number }> = {
   home: { gap: 0.55, turn: 0, rise: 0 },
   work: { gap: 1.0, turn: -0.35, rise: -0.75 },
@@ -158,7 +144,6 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
   let turn = 0;
   let rise = 0;
   let target = ROUTES.home;
-  /** A short kick on navigation, so a page change is felt rather than just seen. */
   let impulse = 0;
   let spin = 0;
   let last = performance.now();
