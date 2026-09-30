@@ -7,14 +7,12 @@ course: ARC2013 Integrated Urbanism Studio
 completed: December 2025
 instructor: Instructor name
 summary: A one-line description, shown on the project card.
-cover: ''
+cover: /src/assets/media/nbmetadatacache.jpeg
 cover_kind: drawing
-gallery: []
 featured: true
 order: 1
 draft: false
 ---
-
 Replace this with the project description. Two or three paragraphs works well:
 the brief, the idea you were testing, and how the drawings and models answer it.
 
