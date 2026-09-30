@@ -24,12 +24,16 @@ const W = 2.2;
 const D = 1.8;
 const GRID = 4;
 
-/** Storey height and rotation offset per route. */
-const ROUTES: Record<string, { gap: number; turn: number }> = {
-  home: { gap: 0.55, turn: 0 },
-  work: { gap: 1.0, turn: -0.35 },
-  about: { gap: 0.06, turn: 0.5 },
-  cv: { gap: 0.32, turn: 0.2 },
+/*
+  Per route: storey height, rotation offset, and a vertical nudge. The building
+  is anchored at its base, so an exploded stack and a flat plan need different
+  framing to sit in the same place on screen.
+*/
+const ROUTES: Record<string, { gap: number; turn: number; rise: number }> = {
+  home: { gap: 0.55, turn: 0, rise: 0 },
+  work: { gap: 1.0, turn: -0.35, rise: -0.75 },
+  about: { gap: 0.06, turn: 0.5, rise: 1.15 },
+  cv: { gap: 0.32, turn: 0.2, rise: 0.45 },
 };
 
 function lines(points: number[]): BufferGeometry {
@@ -152,6 +156,7 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
 
   let gap = ROUTES.home.gap;
   let turn = 0;
+  let rise = 0;
   let target = ROUTES.home;
   /** A short kick on navigation, so a page change is felt rather than just seen. */
   let impulse = 0;
@@ -170,8 +175,10 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
 
-    gap += (target.gap - gap) * Math.min(dt * 3.2, 1);
-    turn += (target.turn - turn) * Math.min(dt * 3.2, 1);
+    const ease = Math.min(dt * 3.2, 1);
+    gap += (target.gap - gap) * ease;
+    turn += (target.turn - turn) * ease;
+    rise += (target.rise - rise) * ease;
 
     impulse *= Math.exp(-dt * 3.4);
     spin += dt * 0.055 + impulse * dt * 1.6;
@@ -185,6 +192,7 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     roof.visible = gap > 0.12;
 
     building.rotation.y = spin + turn;
+    building.position.y = rise;
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
   }

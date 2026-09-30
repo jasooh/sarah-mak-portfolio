@@ -37,7 +37,7 @@ const COLUMNS: [number, number][] = [
 const FLOORS = [0, 1, 2, 3];
 ---
 
-<div class="backdrop" aria-hidden="true">
+<div class="backdrop" transition:persist="backdrop" aria-hidden="true">
   <canvas class="backdrop-gl"></canvas>
   <svg viewBox="-150 -230 340 400" fill="none" preserveAspectRatio="xMidYMid meet">
     <g class="bld">

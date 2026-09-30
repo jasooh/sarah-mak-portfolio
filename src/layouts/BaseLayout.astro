@@ -85,7 +85,7 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
   </head>
 
   <body class="flex min-h-screen flex-col">
-    <BuildingBackdrop transition:persist="backdrop" />
+    <BuildingBackdrop />
     <div class="grain" aria-hidden="true"></div>
     <SiteHeader />
     <main class="relative z-10 flex-1">
