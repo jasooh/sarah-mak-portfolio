@@ -16,7 +16,7 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { HOME_DECK, MEMBERS, PANELS, SECTION, TOP } from './frame';
+import { MEMBERS, PANELS, SECTION, TOP } from './frame';
 
 interface State {
   burst: number;
@@ -27,10 +27,10 @@ interface State {
 }
 
 const ROUTES: Record<string, State> = {
-  home: { burst: 0, panels: HOME_DECK, turn: 0, tilt: 1, zoom: 1 },
-  work: { burst: 1.9, panels: 0, turn: -0.4, tilt: 1, zoom: 0.62 },
+  home: { burst: 0, panels: 1, turn: 0, tilt: 1, zoom: 1 },
+  work: { burst: 1.9, panels: 1, turn: -0.4, tilt: 1, zoom: 0.62 },
   about: { burst: 0, panels: 1, turn: 0.45, tilt: 1, zoom: 1.05 },
-  cv: { burst: 0, panels: 0.3, turn: 0, tilt: 0, zoom: 0.92 },
+  cv: { burst: 0, panels: 1, turn: 0, tilt: 0, zoom: 0.92 },
 };
 
 function memberMesh(member: (typeof MEMBERS)[number]): {

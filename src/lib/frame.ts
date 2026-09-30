@@ -13,7 +13,7 @@ export interface Panel {
   z0: number;
   z1: number;
   level: 'floor' | 'platform';
-  /* 0..1. Boards are laid in this order, so a fraction can be filled. */
+  /* 0..1. Boards lay in this order as the deck fades in. */
   order: number;
 }
 
@@ -81,8 +81,6 @@ export const PANELS: Panel[] = shuffled.map(({ panel }, i) => ({
   order: shuffled.length === 1 ? 0 : i / (shuffled.length - 1),
 }));
 
-/** Fraction of boards laid on the home page. */
-export const HOME_DECK = 0.45;
 
 const C = Math.cos(Math.PI / 6);
 
