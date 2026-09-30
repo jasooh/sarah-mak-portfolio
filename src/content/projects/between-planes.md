@@ -8,7 +8,7 @@ instructor: Maria Denegri
 summary: "Collaborated with: Yashara Abeysinghe"
 cover_kind: photo
 featured: true
-order: 1
+order: 3
 draft: false
 ---
 This project proposes a design for the redevelopment of the Scadding Court Community Centre which has served its purpose as a vital part of the local community of Toronto’s Downtown West. Drawing formal inspiration from the unique angular intersection of Bathurst Street and Dundas Street West, this design reimagines the community centre as an embodiment of the site’s unique urban pattern, rendering this place of gathering as an extension of the urban fabric. Much like the collision of tectonic plates, the building’s form emerges from the urban fabric to create a dedicated space for community intersection.
