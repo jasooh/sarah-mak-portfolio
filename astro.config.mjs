@@ -9,6 +9,10 @@ export default defineConfig({
 
   output: 'static',
 
+  redirects: {
+    '/work/example-project': '/work/terrace',
+  },
+
   integrations: [sitemap()],
 
   image: {
