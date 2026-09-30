@@ -1,75 +1,68 @@
 import {
+  BoxGeometry,
   BufferGeometry,
   Color,
+  DoubleSide,
+  EdgesGeometry,
   Float32BufferAttribute,
   Group,
   LineBasicMaterial,
   LineSegments,
+  Mesh,
+  MeshBasicMaterial,
   OrthographicCamera,
+  PlaneGeometry,
   Scene,
+  Vector3,
   WebGLRenderer,
 } from 'three';
+import { HALF, MEMBERS, PANELS, SECTION, TOP } from './frame';
 
-const FLOORS = 4;
-const W = 2.2;
-const D = 1.8;
-const GRID = 4;
+interface State {
+  burst: number;
+  panels: number;
+  turn: number;
+  tilt: number;
+  zoom: number;
+}
 
-const ROUTES: Record<string, { gap: number; turn: number; rise: number }> = {
-  home: { gap: 0.55, turn: 0, rise: 0 },
-  work: { gap: 1.0, turn: -0.35, rise: -0.75 },
-  about: { gap: 0.06, turn: 0.5, rise: 1.15 },
-  cv: { gap: 0.32, turn: 0.2, rise: 0.45 },
+const ROUTES: Record<string, State> = {
+  home: { burst: 0, panels: 0, turn: 0, tilt: 1, zoom: 1 },
+  work: { burst: 1, panels: 0, turn: -0.4, tilt: 1, zoom: 0.78 },
+  about: { burst: 0, panels: 1, turn: 0.45, tilt: 1, zoom: 1.05 },
+  cv: { burst: 0, panels: 0.35, turn: 0, tilt: 0, zoom: 0.92 },
 };
 
-function lines(points: number[]): BufferGeometry {
-  const geometry = new BufferGeometry();
-  geometry.setAttribute('position', new Float32BufferAttribute(points, 3));
-  return geometry;
-}
+function memberMesh(member: (typeof MEMBERS)[number]): {
+  edges: LineSegments;
+  home: Vector3;
+  push: Vector3;
+} {
+  const a = new Vector3(...member.a);
+  const b = new Vector3(...member.b);
+  const span = new Vector3().subVectors(b, a);
+  const length = span.length() + SECTION;
+  const mid = new Vector3().addVectors(a, b).multiplyScalar(0.5);
 
-function floorPoints(): number[] {
-  const x = W / 2;
-  const z = D / 2;
-  const points: number[] = [
-    -x, 0, -z, x, 0, -z,
-    x, 0, -z, x, 0, z,
-    x, 0, z, -x, 0, z,
-    -x, 0, z, -x, 0, -z,
-  ];
-  for (let i = 1; i < GRID; i += 1) {
-    const t = i / GRID;
-    points.push(-x + W * t, 0, -z, -x + W * t, 0, z);
-    points.push(-x, 0, -z + D * t, x, 0, -z + D * t);
-  }
-  return points;
-}
+  const axis = span.clone().normalize();
+  const size = new Vector3(
+    Math.abs(axis.x) > 0.5 ? length : SECTION,
+    Math.abs(axis.y) > 0.5 ? length : SECTION,
+    Math.abs(axis.z) > 0.5 ? length : SECTION,
+  );
 
-function columnPoints(): number[] {
-  const x = W / 2;
-  const z = D / 2;
-  return [
-    -x, 0, -z, -x, 1, -z,
-    x, 0, -z, x, 1, -z,
-    x, 0, z, x, 1, z,
-    -x, 0, z, -x, 1, z,
-  ];
-}
+  const box = new BoxGeometry(size.x, size.y, size.z);
+  const edges = new LineSegments(new EdgesGeometry(box), new LineBasicMaterial());
+  edges.position.copy(mid);
+  box.dispose();
 
-function roofPoints(): number[] {
-  const x = W / 2 + 0.16;
-  const z = D / 2 + 0.16;
-  const apex = 0.55;
-  return [
-    -x, 0, -z, x, 0, -z,
-    x, 0, -z, x, 0, z,
-    x, 0, z, -x, 0, z,
-    -x, 0, z, -x, 0, -z,
-    -x, 0, -z, 0, apex, 0,
-    x, 0, -z, 0, apex, 0,
-    x, 0, z, 0, apex, 0,
-    -x, 0, z, 0, apex, 0,
-  ];
+  /* Proportional to distance from the centre, so the parts stay in formation
+     the way an exploded axonometric does. */
+  const push = mid.clone().sub(new Vector3(0, TOP / 2, 0)).multiplyScalar(0.5);
+  if (member.kind === 'joist') push.y -= 5;
+  if (member.kind === 'mullion') push.multiplyScalar(1.3);
+
+  return { edges, home: mid.clone(), push };
 }
 
 function inkColour(): Color {
@@ -77,50 +70,70 @@ function inkColour(): Color {
   return new Color(value || '#57544a');
 }
 
+/* The thesis drawings infill the decks in a muted taupe, not the accent. */
+function panelColour(): Color {
+  const value = getComputedStyle(document.documentElement).getPropertyValue('--panel').trim();
+  return new Color(value || '#b3a79f');
+}
+
 export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => void) | null {
   let renderer: WebGLRenderer;
   try {
-    renderer = new WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: true,
-      powerPreference: 'low-power',
-    });
+    renderer = new WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' });
   } catch {
     return null;
   }
-
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
   const scene = new Scene();
-  const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
-  camera.position.set(7, 5.6, 7);
+  const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
 
-  const faint = new LineBasicMaterial({ transparent: true, opacity: 0.55 });
-  const solid = new LineBasicMaterial({ transparent: true, opacity: 1 });
+  const lineMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.7 });
+  const panelMaterial = new MeshBasicMaterial({ transparent: true, opacity: 0, side: DoubleSide });
 
-  const building = new Group();
-  scene.add(building);
+  const frame = new Group();
+  frame.position.y = -TOP / 2;
+  scene.add(frame);
 
-  const slabs: Group[] = [];
-  for (let i = 0; i < FLOORS; i += 1) {
-    const slab = new Group();
-    slab.add(new LineSegments(lines(floorPoints().slice(0, 24)), solid));
-    slab.add(new LineSegments(lines(floorPoints().slice(24)), faint));
-    building.add(slab);
-    slabs.push(slab);
-  }
+  const parts = MEMBERS.map((member) => {
+    const part = memberMesh(member);
+    part.edges.material = lineMaterial;
+    frame.add(part.edges);
+    return part;
+  });
 
-  const columns = new LineSegments(lines(columnPoints()), faint);
-  building.add(columns);
+  const panels = PANELS.map((panel) => {
+    const geometry = new PlaneGeometry(panel.x1 - panel.x0, panel.z1 - panel.z0);
+    const mesh = new Mesh(geometry, panelMaterial);
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.position.set((panel.x0 + panel.x1) / 2, panel.y, (panel.z0 + panel.z1) / 2);
+    frame.add(mesh);
+    return mesh;
+  });
 
-  const roof = new LineSegments(lines(roofPoints()), solid);
-  building.add(roof);
+  const outlines = PANELS.map((panel) => {
+    const w = panel.x1 - panel.x0;
+    const d = panel.z1 - panel.z0;
+    const y = panel.y;
+    const x = (panel.x0 + panel.x1) / 2;
+    const z = (panel.z0 + panel.z1) / 2;
+    const p = [
+      -w / 2, 0, -d / 2, w / 2, 0, -d / 2,
+      w / 2, 0, -d / 2, w / 2, 0, d / 2,
+      w / 2, 0, d / 2, -w / 2, 0, d / 2,
+      -w / 2, 0, d / 2, -w / 2, 0, -d / 2,
+    ];
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new Float32BufferAttribute(p, 3));
+    const line = new LineSegments(geometry, lineMaterial);
+    line.position.set(x, y, z);
+    frame.add(line);
+    return line;
+  });
 
   function applyTheme() {
-    const colour = inkColour();
-    faint.color = colour;
-    solid.color = colour;
+    lineMaterial.color = inkColour();
+    panelMaterial.color = panelColour();
   }
   applyTheme();
 
@@ -128,26 +141,28 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     const { clientWidth: w, clientHeight: h } = canvas;
     if (w === 0 || h === 0) return;
     renderer.setSize(w, h, false);
-    const view = 7.5;
+    const view = 104 / zoom;
     const aspect = w / h;
     camera.left = (-view * aspect) / 2;
     camera.right = (view * aspect) / 2;
     camera.top = view / 2;
     camera.bottom = -view / 2;
     camera.updateProjectionMatrix();
-    camera.lookAt(0, 1.1, 0);
   }
-  resize();
-  new ResizeObserver(resize).observe(canvas);
 
-  let gap = ROUTES.home.gap;
+  let burst = 0;
+  let panelFade = 0;
   let turn = 0;
-  let rise = 0;
+  let tilt = 1;
+  let zoom = 1;
   let target = ROUTES.home;
   let impulse = 0;
   let spin = 0;
   let last = performance.now();
   let running = true;
+
+  resize();
+  new ResizeObserver(resize).observe(canvas);
 
   function setRoute(name: string) {
     const next = ROUTES[name] ?? ROUTES.home;
@@ -155,50 +170,62 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     target = next;
   }
 
-  function frame(now: number) {
+  function frameLoop(now: number) {
     if (!running) return;
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
+    const ease = Math.min(dt * 2.6, 1);
 
-    const ease = Math.min(dt * 3.2, 1);
-    gap += (target.gap - gap) * ease;
+    burst += (target.burst - burst) * ease;
+    panelFade += (target.panels - panelFade) * ease;
     turn += (target.turn - turn) * ease;
-    rise += (target.rise - rise) * ease;
+    tilt += (target.tilt - tilt) * ease;
+    const previousZoom = zoom;
+    zoom += (target.zoom - zoom) * ease;
+    if (Math.abs(zoom - previousZoom) > 0.0002) resize();
 
-    impulse *= Math.exp(-dt * 3.4);
-    spin += dt * 0.055 + impulse * dt * 1.6;
+    impulse *= Math.exp(-dt * 3);
+    spin += dt * 0.05 + impulse * dt * 1.1;
 
-    const height = gap * (FLOORS - 1);
-    slabs.forEach((slab, i) => {
-      slab.position.y = i * gap;
+    parts.forEach((part) => {
+      part.edges.position.set(
+        part.home.x + part.push.x * burst,
+        part.home.y + part.push.y * burst,
+        part.home.z + part.push.z * burst,
+      );
     });
-    columns.scale.y = Math.max(height, 0.001);
-    roof.position.y = height + gap * 0.5;
-    roof.visible = gap > 0.12;
 
-    building.rotation.y = spin + turn;
-    building.position.y = rise;
+    panelMaterial.opacity = panelFade * 0.42;
+    panels.forEach((mesh) => {
+      mesh.visible = panelFade > 0.02;
+    });
+    outlines.forEach((line) => {
+      line.visible = panelFade > 0.02;
+    });
+
+    /* tan(35.26deg): the true isometric elevation her drawings are set at. */
+    const radius = 120;
+    const elevation = radius * 0.7071 * tilt;
+    const angle = spin + turn;
+    camera.position.set(Math.sin(angle) * radius, elevation, Math.cos(angle) * radius);
+    camera.lookAt(0, 0, 0);
+
     renderer.render(scene, camera);
-    requestAnimationFrame(frame);
+    requestAnimationFrame(frameLoop);
   }
 
-  function pause() {
+  document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       running = false;
     } else if (!running) {
       running = true;
       last = performance.now();
-      requestAnimationFrame(frame);
+      requestAnimationFrame(frameLoop);
     }
-  }
-  document.addEventListener('visibilitychange', pause);
+  });
 
-  window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', () => setTimeout(applyTheme, 0));
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => setTimeout(applyTheme, 0));
 
-  requestAnimationFrame(frame);
+  requestAnimationFrame(frameLoop);
   return setRoute;
 }
-
-export { ROUTES };

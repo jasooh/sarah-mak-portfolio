@@ -1,56 +1,45 @@
 ---
-const SLAB = 'M0,0 L103.9,60 L17.3,110 L-86.6,50 Z';
-const GRID = [
-  'M26,15 L-60.6,65',
-  'M-21.7,12.5 L82.3,72.5',
-  'M52,30 L-34.6,80',
-  'M-43.3,25 L60.6,85',
-  'M77.9,45 L-8.7,95',
-  'M-65,37.5 L39,97.5',
+import { MEMBERS, PANELS, iso } from '../lib/frame';
+
+const lines = MEMBERS.map((m) => {
+  const [x1, y1] = iso(...m.a);
+  const [x2, y2] = iso(...m.b);
+  return `M${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)}`;
+});
+
+const quads = PANELS.map((p) => {
+  const corners: [number, number, number][] = [
+    [p.x0, p.y, p.z0],
+    [p.x1, p.y, p.z0],
+    [p.x1, p.y, p.z1],
+    [p.x0, p.y, p.z1],
+  ];
+  return 'M' + corners.map((c) => iso(...c).map((n) => n.toFixed(1)).join(',')).join(' L') + ' Z';
+});
+
+const points = [
+  ...MEMBERS.flatMap((m) => [iso(...m.a), iso(...m.b)]),
+  ...PANELS.flatMap((p) => [iso(p.x0, p.y, p.z0), iso(p.x1, p.y, p.z1)]),
 ];
-const ROOF = 'M0,-14 L128.2,60 L17.3,124 L-110.9,50 Z';
-const RIDGE = [
-  'M0,-14 L8.7,29',
-  'M128.2,60 L8.7,29',
-  'M17.3,124 L8.7,29',
-  'M-110.9,50 L8.7,29',
-];
-const COLUMNS: [number, number][] = [
-  [0, 0],
-  [103.9, 60],
-  [17.3, 110],
-  [-86.6, 50],
-];
-const FLOORS = [0, 1, 2, 3];
+const xs = points.map((p) => p[0]);
+const ys = points.map((p) => p[1]);
+const pad = 4;
+const box = [
+  Math.min(...xs) - pad,
+  Math.min(...ys) - pad,
+  Math.max(...xs) - Math.min(...xs) + pad * 2,
+  Math.max(...ys) - Math.min(...ys) + pad * 2,
+].join(' ');
 ---
 
 <div class="backdrop" transition:persist="backdrop" aria-hidden="true">
   <canvas class="backdrop-gl"></canvas>
-  <svg viewBox="-150 -230 340 400" fill="none" preserveAspectRatio="xMidYMid meet">
-    <g class="bld">
-      {
-        COLUMNS.map(([x, y]) => (
-          <line class="col" x1={x} y1={y} x2={x} y2={y - 60} />
-        ))
-      }
-
-      {
-        FLOORS.map((n) => (
-          <g class="floor" style={`--n: ${n}`}>
-            <path class="slab" d={SLAB} />
-            {GRID.map((d) => (
-              <path class="grid" d={d} />
-            ))}
-          </g>
-        ))
-      }
-
-      <g class="floor roof" style={`--n: ${FLOORS.length}`}>
-        <path class="slab" d={ROOF} />
-        {RIDGE.map((d) => (
-          <path class="grid ridge" d={d} />
-        ))}
-      </g>
+  <svg viewBox={box} fill="none" preserveAspectRatio="xMidYMid meet">
+    <g class="frame-panels">
+      {quads.map((d) => <path d={d} />)}
+    </g>
+    <g class="frame-lines">
+      {lines.map((d) => <path d={d} />)}
     </g>
   </svg>
 </div>
@@ -63,9 +52,7 @@ const FLOORS = [0, 1, 2, 3];
     const host = document.querySelector('.backdrop');
     const canvas = document.querySelector('.backdrop-gl');
     if (!(host instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) return;
-
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (still.matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     function routeName() {
       const path = location.pathname.replace(/\/+$/, '') || '/';
@@ -81,8 +68,7 @@ const FLOORS = [0, 1, 2, 3];
         host.classList.add('is-gl');
         setRoute(routeName());
         document.addEventListener('astro:after-swap', () => setRoute(routeName()));
-      } catch {
-      }
+      } catch {}
     });
   })();
 </script>

@@ -40,7 +40,7 @@ Astro static site, Tailwind v4, content edited via Pages CMS (`.pages.yml`).
   (hairline frame) or `photo` (bare). Keep new fields consistent with it.
 - Headings are lowercase italic (`.heading`); uppercase tracked `.label` is for
   site chrome only — nav, footer, counts.
-- The backdrop has two implementations of one building: the SVG in
-  `BuildingBackdrop.astro` and the three.js scene in `src/lib/backdrop.ts`.
-  Changing the form means changing both, or the fallback stops matching.
+- `src/lib/frame.ts` holds the backdrop geometry. Both renderers read it: the
+  SVG in `BuildingBackdrop.astro` projects it isometrically, `src/lib/backdrop.ts`
+  builds it in three.js. Change the model there, not in either renderer.
 - Run `npx astro check` and `npm run build` before considering a change done.
