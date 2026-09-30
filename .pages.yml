@@ -365,6 +365,13 @@ content:
         label: Footer note
         type: string
         description: Optional line after the copyright notice.
+      - name: favicon
+        label: Site icon
+        type: image
+        description: Shown in the browser tab. Use a square image; it is resized automatically.
+        options:
+          media: images
+          extensions: [png, jpg, jpeg, webp, svg]
 
 settings:
   commit:

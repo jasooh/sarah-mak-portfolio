@@ -19,6 +19,7 @@ const siteSchema = z.object({
     .nullish()
     .transform((value) => value ?? { description: undefined, image: undefined }),
   footer_note: text(),
+  favicon: text(),
 });
 
 const dateRange = {

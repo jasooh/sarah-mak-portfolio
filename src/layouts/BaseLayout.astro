@@ -25,6 +25,22 @@ const shareImage = source
   ? await getImage({ src: source, width: 1200, height: 630, fit: 'cover', format: 'jpeg' })
   : undefined;
 const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.url).href : undefined;
+
+const iconSource = resolveImage(site.favicon);
+let iconHref: string | undefined;
+let touchIconHref: string | undefined;
+if (iconSource) {
+  if (iconSource.format === 'svg') {
+    iconHref = iconSource.src;
+  } else {
+    const [tab, touch] = await Promise.all([
+      getImage({ src: iconSource, width: 64, height: 64, fit: 'cover', format: 'png' }),
+      getImage({ src: iconSource, width: 180, height: 180, fit: 'cover', format: 'png' }),
+    ]);
+    iconHref = tab.src;
+    touchIconHref = touch.src;
+  }
+}
 ---
 
 <!doctype html>
@@ -52,8 +68,17 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
     {pageDescription && <meta name="description" content={pageDescription} />}
     <link rel="canonical" href={canonical} />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    {
+      iconHref ? (
+        <link rel="icon" href={iconHref} />
+      ) : (
+        <>
+          <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+          <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        </>
+      )
+    }
+    {touchIconHref && <link rel="apple-touch-icon" href={touchIconHref} />}
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content="website" />
