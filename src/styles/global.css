@@ -30,6 +30,7 @@
   --muted: #625f50;
   --line: #979381;
   --accent: #cd664d;
+  --panel: #b3a79f;
 
   --grain: 0.028;
 
@@ -62,16 +63,12 @@
   --muted: #bdb8a4;
   --line: #7b7768;
   --accent: #e07a5f;
+  --panel: #8d8279;
 
   --grain: 0.05;
   --backdrop-alpha: 0.11;
 }
 
-/* Backdrop states. Each reads correctly with motion or scripting off. */
-:root { --gap: 60px; --lift: 60px; --ridge: 0.45; }
-:root[data-route='work'] { --gap: 82px; --lift: 96px; --ridge: 0.45; }
-:root[data-route='about'] { --gap: 6px; --lift: -24px; --ridge: 0.12; }
-:root[data-route='cv'] { --gap: 30px; --lift: 18px; --ridge: 0.3; }
 
 @layer base {
   html {
@@ -103,7 +100,6 @@
 }
 
 @layer components {
-  /* --gap is storey height, --lift raises the stack. */
   .backdrop {
     position: fixed;
     inset: 0;
