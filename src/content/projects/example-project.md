@@ -1,11 +1,14 @@
 ---
 title: Example Project
-year: '2025'
-location: London, UK
-category: Studio project
-role: Individual work
-summary: A one-line description of the project, shown on the card and at the top of the page.
+subtitle: A second line, if the project has one
+typology: Residential Building
+location: Toronto, Ontario
+course: ARC2013 Integrated Urbanism Studio
+completed: December 2025
+instructor: Instructor name
+summary: A one-line description, shown on the project card.
 cover: ''
+cover_kind: drawing
 gallery: []
 featured: true
 order: 1
@@ -18,4 +21,5 @@ the brief, the idea you were testing, and how the drawings and models answer it.
 ## Approach
 
 Add headings if the write-up gets long. Images uploaded to the gallery appear
-below the description, each with an optional caption.
+below, each with a caption and an optional scale — set an image to "Drawing" to
+give it the hairline frame, or "Photograph" to let it sit bare.

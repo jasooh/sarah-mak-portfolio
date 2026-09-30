@@ -10,6 +10,7 @@ Pages.
 | --- | --- |
 | Framework | Astro 7, static output (no adapter) |
 | Styling | Tailwind CSS v4 via `@tailwindcss/vite`, tokens in `src/styles/global.css` |
+| Type | IBM Plex Mono, self-hosted — matches the printed portfolio |
 | Content | Astro content collections (Markdown + YAML) |
 | Editing | Pages CMS, hosted at [app.pagescms.org](https://app.pagescms.org) |
 | Images | `astro:assets` — responsive, converted to WebP at build time |
@@ -24,6 +25,24 @@ npm run build    # static build into dist/
 npm run preview  # serve the built site
 npx astro check  # type-check .astro and .ts files
 ```
+
+## Formatting
+
+Project pages follow the printed portfolio: a running head reading
+`Selected Works | <project>`, a numbered italic title (`01| Example Project`)
+with an optional subtitle, then a `Key: Value` metadata block —
+
+    Typology:   Residential Building
+    Location:   Toronto, Ontario
+    Course:     ARC2013 Integrated Urbanism Studio
+    Completed:  December 2025
+    Instructor: Instructor name
+
+— justified body copy, and a gallery whose captions read
+`Ground Floor Site Plan (scale 1:150)`. Each image is marked as a **drawing**
+or a **photograph**: drawings get a hairline frame and sit on the page colour,
+photographs fill their frame. The CV page uses the same sections as the
+printed one: expertise, academic qualifications, activities, experience.
 
 ## Content model
 

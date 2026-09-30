@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { getFeaturedProjects } from '../lib/projects';
+import { getFeaturedProjects, projectNumber } from '../lib/projects';
 import { site } from '../lib/site';
 
 const projects = await getFeaturedProjects();
@@ -25,7 +25,12 @@ const projects = await getFeaturedProjects();
       projects.length > 0 ? (
         <div class="mt-10 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, index) => (
-            <ProjectCard project={project} priority={index < 3} index={index} />
+            <ProjectCard
+              project={project}
+              number={projectNumber(project, index)}
+              priority={index < 3}
+              index={index}
+            />
           ))}
         </div>
       ) : (

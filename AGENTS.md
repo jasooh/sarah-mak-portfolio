@@ -34,4 +34,10 @@ Astro static site, Tailwind v4, content edited via Pages CMS (`.pages.yml`).
   through `astro:assets`.
 - Blank CMS fields arrive as `''` or `null`; the `text()` / `list()` helpers in
   `src/lib/cms-schema.ts` normalise them. Use them for new optional fields.
+- Project pages mirror Sarah's printed portfolio: numbered italic titles,
+  a `Key: Value` metadata block (Typology/Location/Course/Completed/Instructor),
+  captions of the form `Name (scale 1:150)`, and images marked `drawing`
+  (hairline frame) or `photo` (bare). Keep new fields consistent with it.
+- Headings are lowercase italic (`.heading`); uppercase tracked `.label` is for
+  site chrome only — nav, footer, counts.
 - Run `npx astro check` and `npm run build` before considering a change done.

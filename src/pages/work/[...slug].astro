@@ -3,10 +3,12 @@ import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CmsImage from '../../components/CmsImage.astro';
-import { getProjects, type Project } from '../../lib/projects';
+import Figure from '../../components/Figure.astro';
+import { getProjects, projectNumber, type Project } from '../../lib/projects';
 
 interface Props {
   project: Project;
+  number: string;
   previous?: Project;
   next?: Project;
 }
@@ -17,97 +19,106 @@ export const getStaticPaths: GetStaticPaths = async () => {
     params: { slug: project.id },
     props: {
       project,
+      number: projectNumber(project, index),
       previous: projects[index - 1],
       next: projects[index + 1],
     },
   }));
 };
 
-const { project, previous, next } = Astro.props;
-const { title, year, location, category, role, summary, cover, gallery } = project.data;
+const { project, number, previous, next } = Astro.props;
+const { title, subtitle, summary, cover, cover_kind, gallery } = project.data;
 const { Content } = await render(project);
 
+/* The metadata block, in the order it is printed in the portfolio. */
 const facts = [
-  { label: 'Year', value: year },
-  { label: 'Location', value: location },
-  { label: 'Type', value: category },
-  { label: 'Role', value: role },
-].filter((fact) => Boolean(fact.value));
+  ['Typology', project.data.typology],
+  ['Location', project.data.location],
+  ['Course', project.data.course],
+  ['Completed', project.data.completed],
+  ['Instructor', project.data.instructor],
+].filter(([, value]) => Boolean(value)) as [string, string][];
 ---
 
 <BaseLayout title={title} description={summary} image={cover}>
   <article>
-    <header class="mx-auto max-w-6xl px-6 pt-16 pb-12 md:px-10 md:pt-24">
-      <a href="/work" data-reveal class="wipe label transition-colors hover:text-accent">← Work</a>
-      <h1 data-reveal style="--i: 1" class="mt-6 max-w-3xl text-2xl leading-tight font-normal tracking-[0.01em] md:text-4xl">
-        {title}
+    <header class="mx-auto max-w-6xl px-6 pt-12 md:px-10 md:pt-16">
+      {/* The running head from the printed spreads. */}
+      <p data-reveal class="label">
+        <a href="/work" class="wipe transition-colors hover:text-accent">Selected Works</a>
+        <span class="mx-1.5 text-line">|</span>
+        <span class="text-accent">{title}</span>
+      </p>
+
+      <h1 data-reveal style="--i: 1" class="heading mt-10 max-w-3xl text-xl md:text-2xl">
+        <span class="not-italic text-muted">{number}|</span>&nbsp;{title}
       </h1>
       {
-        summary && (
-          <p data-reveal style="--i: 2" class="mt-6 max-w-[52ch] text-base leading-relaxed text-muted">
-            {summary}
+        subtitle && (
+          <p data-reveal style="--i: 2" class="heading mt-1 pl-10 text-sm text-muted">
+            {subtitle}
           </p>
         )
       }
     </header>
 
-    {
-      cover && (
-        <div class="mx-auto max-w-6xl px-6 md:px-10">
-          <div data-reveal style="--i: 3" class="frame">
-            <CmsImage
-              src={cover}
-              alt={title}
-              class="w-full bg-paper-sunk object-cover"
-              aspect="16 / 9"
-              layout="full-width"
-              priority
-            />
-          </div>
-        </div>
-      )
-    }
-
     <div
-      class="mx-auto mt-16 grid max-w-6xl gap-x-12 gap-y-10 px-6 md:grid-cols-[14rem_minmax(0,1fr)] md:px-10"
+      class="mx-auto mt-12 grid max-w-6xl gap-x-12 gap-y-10 px-6 md:grid-cols-[22rem_minmax(0,1fr)] md:px-10"
     >
-      {
-        facts.length > 0 && (
-          <aside data-reveal>
-            <dl class="space-y-4 border-t border-line pt-4">
-              {facts.map((fact) => (
-                <div>
-                  <dt class="label">{fact.label}</dt>
-                  <dd class="mt-1 text-sm">{fact.value}</dd>
+      <div data-reveal>
+        {
+          facts.length > 0 && (
+            <dl class="meta">
+              {facts.map(([label, value]) => (
+                <div class="flex gap-2">
+                  <dt>{label}:</dt>
+                  <dd>{value}</dd>
                 </div>
               ))}
             </dl>
-          </aside>
+          )
+        }
+
+        <div class="prose-page mt-8 text-left md:text-justify">
+          <Content />
+        </div>
+      </div>
+
+      {
+        cover && (
+          <div data-reveal style="--i: 1">
+            <div class:list={[cover_kind === 'drawing' ? 'frame bg-paper p-4' : 'bg-paper-sunk']}>
+              <CmsImage
+                src={cover}
+                alt={title}
+                class="w-full"
+                aspect="1 / 1"
+                layout="full-width"
+                sizes="(min-width: 768px) 55vw, 100vw"
+                priority
+              />
+            </div>
+          </div>
         )
       }
-
-      <div data-reveal style="--i: 1" class="prose-page border-t border-line pt-4">
-        <Content />
-      </div>
     </div>
 
     {
       gallery.length > 0 && (
-        <section class="mx-auto mt-20 max-w-6xl space-y-16 px-6 md:px-10">
-          {gallery.map((item, index) => (
-            <figure data-reveal style={`--i: ${index % 2}`}>
-              <div class="frame">
-                <CmsImage
+        <section class="mx-auto mt-20 max-w-6xl px-6 md:px-10">
+          <div class="grid gap-x-8 gap-y-14 sm:grid-cols-2">
+            {gallery.map((item, index) => (
+              <div data-reveal style={`--i: ${index % 2}`}>
+                <Figure
                   src={item.image}
-                  alt={item.caption ?? ''}
-                  class="w-full bg-paper-sunk"
-                  aspect="3 / 2"
-                  layout="full-width"
+                  caption={item.caption}
+                  scale={item.scale}
+                  kind={item.kind}
+                  sizes="(min-width: 640px) 50vw, 100vw"
                 />
               </div>
-              {item.caption && <figcaption class="label marker mt-4">{item.caption}</figcaption>}
-            </figure>
-          ))}
+            ))}
+          </div>
         </section>
       )
     }

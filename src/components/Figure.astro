@@ -1,0 +1,52 @@
+---
+import CmsImage from './CmsImage.astro';
+
+interface Props {
+  src?: string | null;
+  caption?: string;
+  /** e.g. "1:150" — printed in italic after the caption. */
+  scale?: string;
+  /** Drawings get a hairline frame; photographs sit bare. */
+  kind?: 'drawing' | 'photo';
+  aspect?: string;
+  sizes?: string;
+  priority?: boolean;
+  class?: string;
+}
+
+const {
+  src,
+  caption,
+  scale,
+  kind = 'photo',
+  aspect = '3 / 2',
+  sizes,
+  priority = false,
+  class: className = '',
+} = Astro.props;
+
+const isDrawing = kind === 'drawing';
+---
+
+<figure class={className}>
+  <div class:list={[isDrawing ? 'frame bg-paper p-4' : 'bg-paper-sunk']}>
+    <CmsImage
+      src={src}
+      alt={caption ?? ''}
+      class="w-full"
+      aspect={aspect}
+      layout="full-width"
+      sizes={sizes}
+      priority={priority}
+    />
+  </div>
+
+  {
+    (caption || scale) && (
+      <figcaption class="caption mt-3">
+        {caption}
+        {scale && <em>&nbsp;(scale {scale})</em>}
+      </figcaption>
+    )
+  }
+</figure>

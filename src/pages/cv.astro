@@ -1,47 +1,75 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { cv, formatRange } from '../lib/site';
+
+/* Dated sections share one shape, so they share one block of markup. */
+const dated = [
+  {
+    label: 'academic qualifications',
+    entries: cv.academic.map((entry) => ({
+      range: formatRange(entry.start, entry.end),
+      title: entry.qualification,
+      lines: [entry.institution, entry.faculty],
+      notes: entry.notes,
+    })),
+  },
+  {
+    label: 'activities',
+    entries: cv.activities.map((entry) => ({
+      range: formatRange(entry.start, entry.end),
+      title: entry.role,
+      lines: [entry.organisation],
+      notes: entry.notes,
+    })),
+  },
+  {
+    label: 'experience',
+    entries: cv.experience.map((entry) => ({
+      range: formatRange(entry.start, entry.end),
+      title: entry.role,
+      lines: [entry.organisation, entry.location],
+      notes: entry.notes,
+    })),
+  },
+  {
+    label: 'awards',
+    entries: cv.awards.map((entry) => ({
+      range: entry.year,
+      title: entry.title,
+      lines: [entry.issuer],
+      notes: entry.notes,
+    })),
+  },
+].filter((section) => section.entries.length > 0);
 ---
 
 <BaseLayout title="CV">
-  <section class="mx-auto max-w-4xl px-6 pt-16 md:px-10 md:pt-24">
+  <section class="mx-auto max-w-4xl px-6 pt-12 pb-4 md:px-10 md:pt-16">
     <div data-reveal class="flex flex-wrap items-baseline justify-between gap-4">
-      <h1 class="text-2xl font-normal tracking-tight md:text-3xl">Curriculum vitae</h1>
+      <h1 class="heading text-xl md:text-2xl">curriculum vitae</h1>
       {
         cv.pdf && (
-          <a
-            href={cv.pdf}
-            class="wipe label transition-colors hover:text-accent"
-            download
-          >
+          <a href={cv.pdf} class="wipe label transition-colors hover:text-accent" download>
             Download PDF
           </a>
         )
       }
     </div>
 
-    <div class="mt-16 space-y-16">
+    <div class="mt-14 space-y-14">
       {
-        cv.education.length > 0 && (
+        cv.expertise.length > 0 && (
           <section>
-            <h2 data-reveal class="label marker rule pb-3">Education</h2>
-            <ul class="mt-7 space-y-8">
-              {cv.education.map((entry, index) => (
+            <h2 data-reveal class="heading text-sm">expertise</h2>
+            <ul class="mt-5 grid gap-x-12 gap-y-1.5 sm:grid-cols-2">
+              {cv.expertise.map((item, index) => (
                 <li
                   data-reveal="x"
                   style={`--i: ${index}`}
-                  class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]"
+                  class="meta flex justify-between gap-6 border-b border-line/40 pb-1.5"
                 >
-                  <p class="label md:pt-1">{formatRange(entry.start, entry.end)}</p>
-                  <div>
-                    <p class="text-sm font-medium">{entry.qualification}</p>
-                    {(entry.institution || entry.location) && (
-                      <p class="mt-0.5 text-sm text-muted">
-                        {[entry.institution, entry.location].filter(Boolean).join(', ')}
-                      </p>
-                    )}
-                    {entry.notes && <p class="mt-2 text-sm leading-relaxed text-muted">{entry.notes}</p>}
-                  </div>
+                  <span>{item.name}</span>
+                  {item.duration && <span class="text-muted">{item.duration}</span>}
                 </li>
               ))}
             </ul>
@@ -50,75 +78,31 @@ import { cv, formatRange } from '../lib/site';
       }
 
       {
-        cv.experience.length > 0 && (
+        dated.map((section) => (
           <section>
-            <h2 data-reveal class="label marker rule pb-3">Experience</h2>
-            <ul class="mt-7 space-y-8">
-              {cv.experience.map((entry, index) => (
+            <h2 data-reveal class="heading text-sm">
+              {section.label}
+            </h2>
+            <ul class="mt-5 space-y-6">
+              {section.entries.map((entry, index) => (
                 <li
                   data-reveal="x"
                   style={`--i: ${index}`}
-                  class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]"
+                  class="meta grid gap-x-8 gap-y-0.5 md:grid-cols-[14rem_minmax(0,1fr)]"
                 >
-                  <p class="label md:pt-1">{formatRange(entry.start, entry.end)}</p>
+                  <p class="text-muted">{entry.range}</p>
                   <div>
-                    <p class="text-sm font-medium">{entry.role}</p>
-                    {(entry.organisation || entry.location) && (
-                      <p class="mt-0.5 text-sm text-muted">
-                        {[entry.organisation, entry.location].filter(Boolean).join(', ')}
-                      </p>
-                    )}
-                    {entry.notes && <p class="mt-2 text-sm leading-relaxed text-muted">{entry.notes}</p>}
+                    <p>{entry.title}</p>
+                    {entry.lines.filter(Boolean).map((line) => (
+                      <p class="text-muted">{line}</p>
+                    ))}
+                    {entry.notes && <p class="mt-1.5 text-muted">{entry.notes}</p>}
                   </div>
                 </li>
               ))}
             </ul>
           </section>
-        )
-      }
-
-      {
-        cv.awards.length > 0 && (
-          <section>
-            <h2 data-reveal class="label marker rule pb-3">Awards & recognition</h2>
-            <ul class="mt-7 space-y-8">
-              {cv.awards.map((entry, index) => (
-                <li
-                  data-reveal="x"
-                  style={`--i: ${index}`}
-                  class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]"
-                >
-                  <p class="label md:pt-1">{entry.year}</p>
-                  <div>
-                    <p class="text-sm font-medium">{entry.title}</p>
-                    {entry.issuer && <p class="mt-0.5 text-sm text-muted">{entry.issuer}</p>}
-                    {entry.notes && <p class="mt-2 text-sm leading-relaxed text-muted">{entry.notes}</p>}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
-
-      {
-        cv.skills.length > 0 && (
-          <section>
-            <h2 data-reveal class="label marker rule pb-3">Skills</h2>
-            <ul class="mt-7 space-y-8">
-              {cv.skills.map((entry, index) => (
-                <li
-                  data-reveal="x"
-                  style={`--i: ${index}`}
-                  class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]"
-                >
-                  <p class="label md:pt-1">{entry.group}</p>
-                  <p class="text-sm leading-relaxed">{entry.items.join(', ')}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
+        ))
       }
     </div>
   </section>

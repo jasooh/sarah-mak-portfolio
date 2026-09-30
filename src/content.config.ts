@@ -2,28 +2,54 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { list, text } from './lib/cms-schema';
 
+/*
+  The project fields mirror the metadata block in Sarah's printed portfolio:
+
+    Typology:   Residential Building
+    Location:   Toronto, Ontario
+    Course:     ARC2013 Integrated Urbanism Studio
+    Completed:  December 2025
+    Instructor: Aleris Rodgers
+
+  Drawings there sit inside a hairline frame and photographs sit bare, so each
+  image carries the `kind` that decides which it gets.
+*/
+
+/** `drawing` gets a hairline frame, `photo` sits bare. Anything else is a photo. */
+const imageKind = () => text().transform((value) => (value === 'drawing' ? 'drawing' : 'photo'));
+
 const galleryItem = z.object({
   image: z.string(),
+  /** e.g. "Ground Floor Site Plan" */
   caption: text(),
+  /** e.g. "1:150" — rendered in italic after the caption, as in the portfolio. */
+  scale: text(),
+  kind: imageKind(),
 });
 
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string().min(1),
-    /** Free text so ranges like "2024–25" work as well as a single year. */
-    year: text(),
+    /** The smaller line under the title, e.g. "The Art of Japanese Joinery". */
+    subtitle: text(),
+
+    typology: text(),
     location: text(),
-    category: text(),
-    /** e.g. "Studio project", "Competition entry", "Internship". */
-    role: text(),
-    /** One or two lines shown on the project card and at the top of the page. */
+    course: text(),
+    /** Free text, as printed: "December 2025", "May 2024". */
+    completed: text(),
+    instructor: text(),
+
+    /** One line for the project card. */
     summary: text(),
+
     cover: text(),
+    cover_kind: imageKind(),
     gallery: list(galleryItem),
-    /** Featured projects appear on the home page. */
+
     featured: z.boolean().default(false),
-    /** Lower numbers sort first; projects without an order fall back to year. */
+    /** Also the printed project number: 01, 02, 03… */
     order: z.number().nullish(),
     draft: z.boolean().default(false),
   }),

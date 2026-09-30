@@ -1,36 +1,33 @@
 pdf: ''
-education:
-  - qualification: BA (Hons) Architecture
+expertise:
+  - name: Rhino
+    duration: 6 years
+  - name: Grasshopper
+    duration: 4 years
+  - name: Adobe InDesign
+    duration: 3 years
+  - name: Adobe Photoshop
+    duration: 3 years
+  - name: Adobe Illustrator
+    duration: 3 years
+academic:
+  - qualification: Architectural Studies, Bachelor of Arts
     institution: University name
-    location: City
-    start: '2023'
-    end: 'Present'
+    faculty: Faculty of Architecture, Landscape, and Design
+    start: September 2020
+    end: June 2024
+    notes: ''
+activities:
+  - role: Advocacy Director
+    organisation: Student architecture alliance
+    start: September 2022
+    end: June 2024
     notes: ''
 experience:
-  - role: Architectural Assistant (Placement)
+  - role: Architecture Assistant, Internship
     organisation: Practice name
     location: City
-    start: '2025'
-    end: '2025'
+    start: May 2023
+    end: September 2023
     notes: ''
-awards:
-  - title: Award or commendation
-    issuer: Awarding body
-    year: '2025'
-    notes: ''
-skills:
-  - group: Drawing
-    items:
-      - AutoCAD
-      - Rhino
-      - Revit
-  - group: Visualisation
-    items:
-      - Illustrator
-      - InDesign
-      - Photoshop
-      - Enscape
-  - group: Making
-    items:
-      - Physical modelmaking
-      - Laser cutting
+awards: []

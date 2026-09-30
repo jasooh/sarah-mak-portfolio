@@ -32,13 +32,34 @@ const dateRange = {
   end: text(),
 };
 
+/*
+  Sections follow the CV page of Sarah's portfolio: expertise (software with
+  how long she has used it), academic qualifications, activities — what she
+  lists there as "curriculum vitae" — and experience.
+*/
 const cvSchema = z.object({
   pdf: text(),
-  education: list(
+  expertise: list(
+    z.object({
+      name: z.string(),
+      /** As printed: "6 years", "3 months". */
+      duration: text(),
+    }),
+  ),
+  academic: list(
     z.object({
       qualification: z.string(),
       institution: text(),
-      location: text(),
+      /** e.g. "Daniels Faculty of Architecture, Landscape, and Design". */
+      faculty: text(),
+      notes: text(),
+      ...dateRange,
+    }),
+  ),
+  activities: list(
+    z.object({
+      role: z.string(),
+      organisation: text(),
       notes: text(),
       ...dateRange,
     }),
@@ -58,12 +79,6 @@ const cvSchema = z.object({
       issuer: text(),
       year: text(),
       notes: text(),
-    }),
-  ),
-  skills: list(
-    z.object({
-      group: z.string(),
-      items: list(z.string()),
     }),
   ),
 });

@@ -28,10 +28,10 @@ content:
       template: '{primary}.md'
       field: create
     view:
-      fields: [title, year, category, featured, draft]
+      fields: [title, typology, completed, featured, draft]
       primary: title
-      sort: [order, year, title]
-      search: [title, summary, location]
+      sort: [order, completed, title]
+      search: [title, subtitle, summary, location, typology]
       default:
         sort: order
         order: asc
@@ -42,43 +42,52 @@ content:
         required: true
         options:
           maxlength: 120
-      - name: year
-        label: Year
+      - name: subtitle
+        label: Subtitle
         type: string
-        description: A single year or a range, e.g. 2025 or 2024–25.
-        options:
-          maxlength: 20
+        description: The smaller line under the title, e.g. "The Art of Japanese Joinery".
+      - name: typology
+        label: Typology
+        type: string
+        description: e.g. Residential Building, Teahouse, Museum.
       - name: location
         label: Location
         type: string
-      - name: category
-        label: Project type
-        type: select
-        options:
-          placeholder: Select a type
-          values:
-            - Studio project
-            - Competition entry
-            - Live build
-            - Research
-            - Drawing study
-            - Practice work
-      - name: role
-        label: Role
+        description: e.g. Toronto, Ontario.
+      - name: course
+        label: Course
         type: string
-        description: e.g. Individual work, Group of three, Architectural assistant.
+        description: e.g. ARC2013 Integrated Urbanism Studio.
+      - name: completed
+        label: Completed
+        type: string
+        description: e.g. December 2025.
+      - name: instructor
+        label: Instructor
+        type: string
       - name: summary
         label: Summary
         type: text
-        description: One line, shown on the project card and under the title.
+        description: One line, shown on the project card only.
         options:
           maxlength: 200
       - name: cover
         label: Cover image
         type: image
-        description: Used on the cards, at the top of the project page, and when sharing.
+        description: Used on the cards, on the project page, and when sharing.
         options:
           media: images
+      - name: cover_kind
+        label: Cover is a
+        type: select
+        default: photo
+        description: Drawings get a hairline frame and sit on the page colour; photographs fill the frame.
+        options:
+          values:
+            - name: photo
+              label: Photograph
+            - name: drawing
+              label: Drawing
       - name: gallery
         label: Gallery
         type: object
@@ -96,16 +105,31 @@ content:
           - name: caption
             label: Caption
             type: string
+            description: e.g. Ground Floor Site Plan.
+          - name: scale
+            label: Scale
+            type: string
+            description: Printed in italic after the caption, e.g. 1:150. Leave empty for photographs.
+          - name: kind
+            label: This is a
+            type: select
+            default: photo
+            options:
+              values:
+                - name: photo
+                  label: Photograph
+                - name: drawing
+                  label: Drawing
       - name: featured
         label: Show on home page
         type: boolean
         default: true
       - name: order
-        label: Sort order
+        label: Project number
         type: number
-        description: Lower numbers appear first. Leave empty to sort by year.
+        description: Also the number printed before the title — 1 becomes "01".
         options:
-          min: 0
+          min: 1
       - name: draft
         label: Draft
         type: boolean
@@ -155,13 +179,30 @@ content:
         options:
           media: docs
           extensions: [pdf]
-      - name: education
-        label: Education
+      - name: expertise
+        label: Expertise
+        type: object
+        description: Software, and how long you have used it.
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{name} — {duration}'
+        fields:
+          - name: name
+            label: Software
+            type: string
+            required: true
+          - name: duration
+            label: Experience
+            type: string
+            description: e.g. 6 years, 3 months.
+      - name: academic
+        label: Academic qualifications
         type: object
         list:
           collapsible:
             collapsed: true
-            summary: '{qualification} — {institution}'
+            summary: '{qualification}'
         fields:
           - name: qualification
             label: Qualification
@@ -170,8 +211,35 @@ content:
           - name: institution
             label: Institution
             type: string
-          - name: location
-            label: Location
+          - name: faculty
+            label: Faculty
+            type: string
+          - name: start
+            label: From
+            type: string
+            description: e.g. September 2024.
+          - name: end
+            label: To
+            type: string
+            description: Use "Present" for current studies.
+          - name: notes
+            label: Notes
+            type: text
+      - name: activities
+        label: Activities
+        type: object
+        description: Societies, competitions and roles outside paid work.
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{role} — {organisation}'
+        fields:
+          - name: role
+            label: Role
+            type: string
+            required: true
+          - name: organisation
+            label: Organisation
             type: string
           - name: start
             label: From
@@ -179,7 +247,6 @@ content:
           - name: end
             label: To
             type: string
-            description: Use "Present" for current studies.
           - name: notes
             label: Notes
             type: text
@@ -231,23 +298,6 @@ content:
           - name: notes
             label: Notes
             type: text
-      - name: skills
-        label: Skills
-        type: object
-        list:
-          collapsible:
-            collapsed: true
-            summary: '{group}'
-        fields:
-          - name: group
-            label: Group
-            type: string
-            required: true
-            description: e.g. Drawing, Visualisation, Making.
-          - name: items
-            label: Skills
-            type: string
-            list: true
 
   - name: site
     label: Site settings

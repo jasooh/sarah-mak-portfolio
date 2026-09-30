@@ -14,7 +14,7 @@ const { title, headline, portrait, portrait_alt } = page.data;
 
 <BaseLayout title={title} image={portrait}>
   <section class="mx-auto max-w-6xl px-6 pt-16 md:px-10 md:pt-24">
-    <h1 data-reveal class="text-2xl font-normal tracking-tight md:text-3xl">{title}</h1>
+    <h1 data-reveal class="heading text-xl md:text-2xl">{title.toLowerCase()}</h1>
 
     <div class="mt-14 grid gap-x-12 gap-y-10 md:grid-cols-[18rem_minmax(0,1fr)]">
       <div data-reveal style="--i: 1" class="frame h-fit">

@@ -1,11 +1,19 @@
 /*
-  Fonts: NieR: Automata's UI uses Rodin (Fontworks, proprietary). Zen Kaku
-  Gothic New is by the same foundry and free — the closest honest stand-in.
-  Latin subsets only, self-hosted, so there is no third-party request.
+  Type follows Sarah's own portfolio, which is set entirely in a monospace
+  face with italic lowercase headings. That happens to sit well with the
+  YoRHa reference too — the game's logs and terminals read as fixed-width.
+
+  IBM Plex Mono has true italics (not slanted romans), which the headings
+  depend on. Latin subsets only, self-hosted, so no third-party request.
+
+  To go back to a proportional face, change --font-sans below; nothing else
+  refers to the family directly.
 */
-@import '@fontsource/zen-kaku-gothic-new/latin-400.css';
-@import '@fontsource/zen-kaku-gothic-new/latin-500.css';
-@import '@fontsource/zen-kaku-gothic-new/latin-700.css';
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-400-italic.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+@import '@fontsource/ibm-plex-mono/latin-600.css';
+@import '@fontsource/ibm-plex-mono/latin-600-italic.css';
 @import "tailwindcss";
 
 /*
@@ -23,7 +31,8 @@
   question.
 */
 @theme inline {
-  --font-sans: "Zen Kaku Gothic New", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-sans: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --color-paper: var(--paper);
   --color-paper-sunk: var(--paper-sunk);
@@ -127,7 +136,37 @@
     );
   }
 
-  /* Small uppercase labels: project metadata, section headings, captions. */
+  /*
+    Section and project headings, after Sarah's portfolio: italic lowercase,
+    semibold. Titles there read `terrace`, `expertise` — never title case.
+  */
+  .heading {
+    @apply font-semibold text-ink;
+    font-style: italic;
+    letter-spacing: 0.005em;
+  }
+
+  /*
+    Her metadata blocks are plain `Key: Value` lines in the body face, at the
+    same weight and colour, with tight leading. No uppercase, no rules.
+  */
+  .meta {
+    @apply text-[0.8125rem] leading-[1.65] text-ink/85;
+  }
+
+  /*
+    Figure captions read `Ground Floor Site Plan (scale 1:150)` — the name
+    upright, the scale in italic.
+  */
+  .caption {
+    @apply text-[0.75rem] leading-relaxed text-ink/75;
+  }
+  .caption em {
+    font-style: italic;
+    @apply text-muted;
+  }
+
+  /* Uppercase tracked labels stay for the site chrome — nav, footer, counts. */
   .label {
     @apply text-[0.6875rem] font-medium uppercase text-muted;
     letter-spacing: 0.2em;
@@ -223,14 +262,22 @@
 
   /* Long-form Markdown body copy (project descriptions, about, etc.). */
   .prose-page {
-    @apply max-w-[62ch] text-[0.9375rem] leading-[1.8] text-ink/90;
+    @apply max-w-[68ch] text-[0.8125rem] leading-[1.85] text-ink/90;
+  }
+  @media (width >= 48rem) {
+    .prose-page {
+      text-align: justify;
+      hyphens: auto;
+    }
   }
   .prose-page > * + * {
     @apply mt-5;
   }
   .prose-page h2,
   .prose-page h3 {
-    @apply font-medium tracking-tight text-ink;
+    @apply font-semibold text-ink;
+    font-style: italic;
+    text-align: left;
   }
   .prose-page h2 {
     @apply mt-12 text-lg;
