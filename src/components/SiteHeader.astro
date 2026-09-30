@@ -11,11 +11,11 @@ const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 
-<header class="border-b border-line">
+<header class="rule">
   <div class="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-x-8 gap-y-3 px-6 py-6 md:px-10">
-    <a href="/" class="text-sm font-medium tracking-tight transition-opacity hover:opacity-60">
+    <a href="/" class="group text-sm font-medium tracking-[0.12em] uppercase transition-colors hover:text-accent">
       {site.name}
-      {site.role && <span class="ml-2 font-normal text-muted">{site.role}</span>}
+      {site.role && <span class="label ml-3 normal-case">{site.role}</span>}
     </a>
 
     <nav aria-label="Primary">
@@ -27,8 +27,8 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
                 href={item.href}
                 aria-current={isCurrent(item.href) ? 'page' : undefined}
                 class:list={[
-                  'text-sm transition-opacity hover:opacity-60',
-                  isCurrent(item.href) ? 'text-ink' : 'text-muted',
+                  'text-sm tracking-[0.08em] uppercase transition-colors hover:text-accent',
+                  isCurrent(item.href) ? 'marker text-ink' : 'text-muted',
                 ]}
               >
                 {item.label}

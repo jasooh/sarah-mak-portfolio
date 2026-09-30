@@ -9,7 +9,7 @@ const projects = await getProjects();
 <BaseLayout title="Work" description="Architecture and design projects.">
   <section class="mx-auto max-w-6xl px-6 pt-16 md:px-10 md:pt-24">
     <h1 class="text-2xl font-normal tracking-tight md:text-3xl">Work</h1>
-    <p class="label mt-3">{projects.length} {projects.length === 1 ? 'project' : 'projects'}</p>
+    <p class="label marker mt-4">{projects.length} {projects.length === 1 ? 'project' : 'projects'}</p>
 
     {
       projects.length > 0 ? (

@@ -11,7 +11,7 @@ import { cv, formatRange } from '../lib/site';
         cv.pdf && (
           <a
             href={cv.pdf}
-            class="text-sm underline decoration-line underline-offset-4 transition-colors hover:decoration-ink"
+            class="label transition-colors hover:text-accent"
             download
           >
             Download PDF
@@ -24,10 +24,10 @@ import { cv, formatRange } from '../lib/site';
       {
         cv.education.length > 0 && (
           <section>
-            <h2 class="label border-b border-line pb-3">Education</h2>
-            <ul class="mt-6 space-y-8">
+            <h2 class="label marker rule pb-3">Education</h2>
+            <ul class="mt-7 space-y-8">
               {cv.education.map((entry) => (
-                <li class="grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+                <li class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
                   <p class="label md:pt-1">{formatRange(entry.start, entry.end)}</p>
                   <div>
                     <p class="text-sm font-medium">{entry.qualification}</p>
@@ -48,10 +48,10 @@ import { cv, formatRange } from '../lib/site';
       {
         cv.experience.length > 0 && (
           <section>
-            <h2 class="label border-b border-line pb-3">Experience</h2>
-            <ul class="mt-6 space-y-8">
+            <h2 class="label marker rule pb-3">Experience</h2>
+            <ul class="mt-7 space-y-8">
               {cv.experience.map((entry) => (
-                <li class="grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+                <li class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
                   <p class="label md:pt-1">{formatRange(entry.start, entry.end)}</p>
                   <div>
                     <p class="text-sm font-medium">{entry.role}</p>
@@ -72,10 +72,10 @@ import { cv, formatRange } from '../lib/site';
       {
         cv.awards.length > 0 && (
           <section>
-            <h2 class="label border-b border-line pb-3">Awards & recognition</h2>
-            <ul class="mt-6 space-y-8">
+            <h2 class="label marker rule pb-3">Awards & recognition</h2>
+            <ul class="mt-7 space-y-8">
               {cv.awards.map((entry) => (
-                <li class="grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+                <li class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
                   <p class="label md:pt-1">{entry.year}</p>
                   <div>
                     <p class="text-sm font-medium">{entry.title}</p>
@@ -92,10 +92,10 @@ import { cv, formatRange } from '../lib/site';
       {
         cv.skills.length > 0 && (
           <section>
-            <h2 class="label border-b border-line pb-3">Skills</h2>
-            <ul class="mt-6 space-y-8">
+            <h2 class="label marker rule pb-3">Skills</h2>
+            <ul class="mt-7 space-y-8">
               {cv.skills.map((entry) => (
-                <li class="grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+                <li class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
                   <p class="label md:pt-1">{entry.group}</p>
                   <p class="text-sm leading-relaxed">{entry.items.join(', ')}</p>
                 </li>

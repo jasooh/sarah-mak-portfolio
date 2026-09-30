@@ -14,17 +14,22 @@ const meta = [year, location ?? category].filter(Boolean).join(' · ');
 
 <article>
   <a href={`/work/${project.id}`} class="group block">
-    <CmsImage
-      src={cover}
-      alt={title}
-      class="w-full bg-paper-sunk object-cover transition-opacity duration-300 group-hover:opacity-85"
-      aspect="4 / 3"
-      layout="full-width"
-      priority={priority}
-    />
+    <div class="frame aspect-[4/3] overflow-hidden">
+      <CmsImage
+        src={cover}
+        alt={title}
+        class="h-full w-full bg-paper-sunk object-cover transition-opacity duration-300 group-hover:opacity-90"
+        aspect="4 / 3"
+        layout="full-width"
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        priority={priority}
+      />
+    </div>
 
-    <div class="mt-4 space-y-1">
-      <h3 class="text-sm font-medium tracking-tight">{title}</h3>
+    <div class="mt-5 space-y-1">
+      <h3 class="text-sm font-medium tracking-[0.06em] uppercase transition-colors group-hover:text-accent">
+        {title}
+      </h3>
       {meta && <p class="label">{meta}</p>}
       {summary && <p class="pt-1 text-sm leading-relaxed text-muted">{summary}</p>}
     </div>

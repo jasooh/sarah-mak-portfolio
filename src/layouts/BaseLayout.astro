@@ -58,9 +58,13 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
       )
     }
     <meta name="twitter:card" content={shareImageUrl ? 'summary_large_image' : 'summary'} />
+
+    <meta name="theme-color" content="#e4e0cd" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#4b4840" media="(prefers-color-scheme: dark)" />
   </head>
 
   <body class="flex min-h-screen flex-col">
+    <div class="grain" aria-hidden="true"></div>
     <SiteHeader />
     <main class="flex-1">
       <slot />

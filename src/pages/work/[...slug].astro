@@ -38,8 +38,8 @@ const facts = [
 <BaseLayout title={title} description={summary} image={cover}>
   <article>
     <header class="mx-auto max-w-6xl px-6 pt-16 pb-12 md:px-10 md:pt-24">
-      <a href="/work" class="label transition-colors hover:text-ink">← Work</a>
-      <h1 class="mt-6 max-w-3xl text-2xl leading-tight font-normal tracking-tight md:text-4xl">
+      <a href="/work" class="label transition-colors hover:text-accent">← Work</a>
+      <h1 class="mt-6 max-w-3xl text-2xl leading-tight font-normal tracking-[0.01em] md:text-4xl">
         {title}
       </h1>
       {summary && <p class="mt-6 max-w-[52ch] text-base leading-relaxed text-muted">{summary}</p>}
@@ -48,14 +48,16 @@ const facts = [
     {
       cover && (
         <div class="mx-auto max-w-6xl px-6 md:px-10">
-          <CmsImage
-            src={cover}
-            alt={title}
-            class="w-full bg-paper-sunk object-cover"
-            aspect="16 / 9"
-            layout="full-width"
-            priority
-          />
+          <div class="frame">
+            <CmsImage
+              src={cover}
+              alt={title}
+              class="w-full bg-paper-sunk object-cover"
+              aspect="16 / 9"
+              layout="full-width"
+              priority
+            />
+          </div>
         </div>
       )
     }
@@ -88,14 +90,16 @@ const facts = [
         <section class="mx-auto mt-20 max-w-6xl space-y-16 px-6 md:px-10">
           {gallery.map((item) => (
             <figure>
-              <CmsImage
-                src={item.image}
-                alt={item.caption ?? ''}
-                class="w-full bg-paper-sunk"
-                aspect="3 / 2"
-                layout="full-width"
-              />
-              {item.caption && <figcaption class="label mt-3">{item.caption}</figcaption>}
+              <div class="frame">
+                <CmsImage
+                  src={item.image}
+                  alt={item.caption ?? ''}
+                  class="w-full bg-paper-sunk"
+                  aspect="3 / 2"
+                  layout="full-width"
+                />
+              </div>
+              {item.caption && <figcaption class="label marker mt-4">{item.caption}</figcaption>}
             </figure>
           ))}
         </section>
@@ -105,11 +109,11 @@ const facts = [
     {
       (previous || next) && (
         <nav
-          class="mx-auto mt-24 flex max-w-6xl items-baseline justify-between gap-6 border-t border-line px-6 pt-6 md:px-10"
+          class="rule-t mx-auto mt-24 flex max-w-6xl items-baseline justify-between gap-6 px-6 pt-6 md:px-10"
           aria-label="More projects"
         >
           {previous ? (
-            <a href={`/work/${previous.id}`} class="text-sm text-muted transition-colors hover:text-ink">
+            <a href={`/work/${previous.id}`} class="label transition-colors hover:text-accent">
               ← {previous.data.title}
             </a>
           ) : (
@@ -118,7 +122,7 @@ const facts = [
           {next ? (
             <a
               href={`/work/${next.id}`}
-              class="text-right text-sm text-muted transition-colors hover:text-ink"
+              class="label text-right transition-colors hover:text-accent"
             >
               {next.data.title} →
             </a>

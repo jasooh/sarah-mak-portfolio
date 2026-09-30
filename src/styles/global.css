@@ -1,14 +1,29 @@
+/*
+  Fonts: NieR: Automata's UI uses Rodin (Fontworks, proprietary). Zen Kaku
+  Gothic New is by the same foundry and free — the closest honest stand-in.
+  Latin subsets only, self-hosted, so there is no third-party request.
+*/
+@import '@fontsource/zen-kaku-gothic-new/latin-400.css';
+@import '@fontsource/zen-kaku-gothic-new/latin-500.css';
+@import '@fontsource/zen-kaku-gothic-new/latin-700.css';
 @import "tailwindcss";
 
 /*
-  Design tokens. The semantic colours are declared as plain custom properties
-  in :root so they can be swapped for dark mode, then exposed to Tailwind with
-  `@theme inline` — that keeps utilities like `bg-paper` or `text-muted`
-  pointing at the variable rather than baking in a literal value.
+  Palette taken from AccraZed/YoRHA-UI-BetterDiscord:
+    --color-high  rgb(218,212,187)  sand
+    --color-low   rgb(87,84,74)     warm grey ink
+    --color-mid   rgb(151,147,129)  hairline
+    --color-alert rgb(205,102,77)   terracotta accent
+  Dark mode is the straight high/low inversion that theme uses.
+
+  Two deliberate departures: the page sits a little lighter than the original
+  sand so photography and drawings read cleanly against it, and secondary text
+  is darker than --color-mid, which only reaches 2.3:1 on this background. The
+  original mid tone is kept for hairlines, where contrast is not a legibility
+  question.
 */
 @theme inline {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: "Zen Kaku Gothic New", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
 
   --color-paper: var(--paper);
   --color-paper-sunk: var(--paper-sunk);
@@ -19,23 +34,39 @@
 }
 
 :root {
-  --paper: #ffffff;
-  --paper-sunk: #f4f4f2;
-  --ink: #17181a;
-  --muted: #6b6f76;
-  --line: #e2e2de;
-  --accent: #17181a;
+  --paper: #e4e0cd;
+  --paper-sunk: #d8d3b8;
+  --ink: #57544a;
+  --muted: #625f50;
+  --line: #979381;
+  --accent: #cd664d;
+
+  /* Strength of the scanline grain over the page. */
+  --grain: 0.028;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #101113;
-    --paper-sunk: #17181a;
-    --ink: #f2f2f0;
-    --muted: #9ba0a8;
-    --line: #2a2c30;
-    --accent: #f2f2f0;
+  :root:not([data-theme="light"]) {
+    --paper: #4b4840;
+    --paper-sunk: #57544a;
+    --ink: #dad4bb;
+    --muted: #bdb8a4;
+    --line: #7b7768;
+    --accent: #e07a5f;
+
+    --grain: 0.05;
   }
+}
+
+:root[data-theme="dark"] {
+  --paper: #4b4840;
+  --paper-sunk: #57544a;
+  --ink: #dad4bb;
+  --muted: #bdb8a4;
+  --line: #7b7768;
+  --accent: #e07a5f;
+
+  --grain: 0.05;
 }
 
 @layer base {
@@ -52,47 +83,179 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Nothing in the reference theme is rounded — border-radius: 0 appears in it
+     about a hundred times. Hard corners are the strongest single cue. */
+  * {
+    border-radius: 0 !important;
+  }
+
   ::selection {
-    background-color: var(--ink);
+    background-color: var(--accent);
     color: var(--paper);
   }
 
   :focus-visible {
-    outline: 2px solid var(--ink);
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
 }
 
 @layer components {
-  /* Small uppercase labels used for project metadata and section headings. */
+  /*
+    Faint horizontal scanlines over the whole page — the YoRHa menu texture,
+    dialled down until it reads as paper grain rather than an effect. Fixed and
+    non-interactive, and it stays perfectly still: no animation to opt out of.
+  */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--ink) calc(var(--grain) * 100%), transparent) 0 1px,
+      transparent 1px 3px
+    );
+  }
+
+  /* Small uppercase labels: project metadata, section headings, captions. */
   .label {
-    @apply text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-muted;
+    @apply text-[0.6875rem] font-medium uppercase text-muted;
+    letter-spacing: 0.2em;
+  }
+
+  /*
+    The YoRHa double rule — one solid hairline with a lighter one just beneath.
+    Used under section headings and the site header.
+  */
+  .rule {
+    position: relative;
+    border-bottom: 1px solid var(--line);
+  }
+  .rule::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    margin-top: 3px;
+    height: 1px;
+    background-color: var(--line);
+    opacity: 0.45;
+  }
+
+  .rule-t {
+    position: relative;
+    border-top: 1px solid var(--line);
+  }
+  .rule-t::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 100%;
+    margin-bottom: 3px;
+    height: 1px;
+    background-color: var(--line);
+    opacity: 0.45;
+  }
+
+  /* Rotated square bullet, the menu marker from the game's UI. */
+  .marker {
+    position: relative;
+    padding-left: 1.45em;
+  }
+  .marker::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 0.3125rem;
+    height: 0.3125rem;
+    background-color: var(--accent);
+    transform: rotate(45deg);
+  }
+
+  /*
+    Hairline frame with corner ticks, for image wells. The ticks are two
+    L-shaped pseudo-elements on opposite corners.
+  */
+  .frame {
+    position: relative;
+    outline: 1px solid var(--line);
+    outline-offset: 0;
+  }
+  .frame::before,
+  .frame::after {
+    content: '';
+    position: absolute;
+    width: 0.6875rem;
+    height: 0.6875rem;
+    border: 1px solid var(--ink);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .frame::before {
+    top: -4px;
+    left: -4px;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+  }
+  .frame::after {
+    right: -4px;
+    bottom: -4px;
+    border-left-color: transparent;
+    border-top-color: transparent;
+  }
+  .frame:where(:hover, :focus-within)::before,
+  .frame:where(:hover, :focus-within)::after,
+  .group:where(:hover, :focus-within) .frame::before,
+  .group:where(:hover, :focus-within) .frame::after {
+    opacity: 1;
   }
 
   /* Long-form Markdown body copy (project descriptions, about, etc.). */
   .prose-page {
-    @apply max-w-[62ch] text-[0.9375rem] leading-[1.75] text-ink/85;
+    @apply max-w-[62ch] text-[0.9375rem] leading-[1.8] text-ink/90;
   }
   .prose-page > * + * {
     @apply mt-5;
   }
+  .prose-page h2,
+  .prose-page h3 {
+    @apply font-medium tracking-tight text-ink;
+  }
   .prose-page h2 {
-    @apply mt-12 text-lg font-medium tracking-tight text-ink;
+    @apply mt-12 text-lg;
   }
   .prose-page h3 {
-    @apply mt-10 text-base font-medium tracking-tight text-ink;
+    @apply mt-10 text-base;
   }
   .prose-page a {
-    @apply underline decoration-line underline-offset-4 transition-colors hover:decoration-ink;
+    @apply underline decoration-line underline-offset-4 transition-colors;
+  }
+  .prose-page a:hover {
+    @apply text-accent decoration-accent;
   }
   .prose-page ul {
-    @apply list-disc space-y-1.5 pl-5;
+    @apply list-none space-y-2 pl-5;
+  }
+  .prose-page ul > li {
+    position: relative;
+  }
+  .prose-page ul > li::before {
+    content: '';
+    position: absolute;
+    left: -1.05em;
+    top: 0.62em;
+    width: 0.25rem;
+    height: 0.25rem;
+    background-color: var(--accent);
+    transform: rotate(45deg);
   }
   .prose-page ol {
-    @apply list-decimal space-y-1.5 pl-5;
+    @apply list-decimal space-y-2 pl-5;
   }
   .prose-page blockquote {
-    @apply border-l border-line pl-5 text-muted italic;
+    @apply border-l border-accent pl-5 text-muted italic;
   }
   .prose-page img {
     @apply my-8 w-full;
