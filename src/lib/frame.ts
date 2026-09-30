@@ -13,6 +13,8 @@ export interface Panel {
   z0: number;
   z1: number;
   level: 'floor' | 'platform';
+  /* 0..1. Boards are laid in this order, so a fraction can be filled. */
+  order: number;
 }
 
 /* Dimensions from the thesis drawings: a 36in cube on 6in legs. */
@@ -57,17 +59,30 @@ for (const z of [-9, 9]) {
 
 export const MEMBERS = members;
 
-export const PANELS: Panel[] = [];
+const raw: Omit<Panel, 'order'>[] = [];
 for (let x = -E; x < PLATFORM_X - 0.1; x += 6) {
   for (let z = -E; z < E - 0.1; z += 6) {
-    PANELS.push({ y: SILL + SECTION / 2, x0: x, x1: Math.min(x + 6, PLATFORM_X), z0: z, z1: Math.min(z + 6, E), level: 'floor' });
+    raw.push({ y: SILL + SECTION / 2, x0: x, x1: Math.min(x + 6, PLATFORM_X), z0: z, z1: Math.min(z + 6, E), level: 'floor' });
   }
 }
 for (let x = PLATFORM_X; x < E - 0.1; x += 6) {
   for (let z = -E; z < E - 0.1; z += 6) {
-    PANELS.push({ y: MID + SECTION / 2, x0: x, x1: Math.min(x + 6, E), z0: z, z1: Math.min(z + 6, E), level: 'platform' });
+    raw.push({ y: MID + SECTION / 2, x0: x, x1: Math.min(x + 6, E), z0: z, z1: Math.min(z + 6, E), level: 'platform' });
   }
 }
+
+/* Deterministic scatter, so a partial deck looks laid rather than sliced. */
+const shuffled = raw
+  .map((panel, i) => ({ panel, key: Math.sin(i * 12.9898) * 43758.5453 % 1 }))
+  .sort((a, b) => Math.abs(a.key) - Math.abs(b.key));
+
+export const PANELS: Panel[] = shuffled.map(({ panel }, i) => ({
+  ...panel,
+  order: shuffled.length === 1 ? 0 : i / (shuffled.length - 1),
+}));
+
+/** Fraction of boards laid on the home page. */
+export const HOME_DECK = 0.45;
 
 const C = Math.cos(Math.PI / 6);
 

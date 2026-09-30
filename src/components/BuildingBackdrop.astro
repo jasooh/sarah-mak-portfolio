@@ -1,5 +1,5 @@
 ---
-import { MEMBERS, PANELS, iso } from '../lib/frame';
+import { HOME_DECK, MEMBERS, PANELS, iso } from '../lib/frame';
 
 const lines = MEMBERS.map((m) => {
   const [x1, y1] = iso(...m.a);
@@ -7,7 +7,7 @@ const lines = MEMBERS.map((m) => {
   return `M${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)}`;
 });
 
-const quads = PANELS.map((p) => {
+const quads = PANELS.filter((p) => p.order <= HOME_DECK).map((p) => {
   const corners: [number, number, number][] = [
     [p.x0, p.y, p.z0],
     [p.x1, p.y, p.z0],

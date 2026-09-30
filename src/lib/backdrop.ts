@@ -16,7 +16,7 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { HALF, MEMBERS, PANELS, SECTION, TOP } from './frame';
+import { HOME_DECK, MEMBERS, PANELS, SECTION, TOP } from './frame';
 
 interface State {
   burst: number;
@@ -27,10 +27,10 @@ interface State {
 }
 
 const ROUTES: Record<string, State> = {
-  home: { burst: 0, panels: 0, turn: 0, tilt: 1, zoom: 1 },
-  work: { burst: 1, panels: 0, turn: -0.4, tilt: 1, zoom: 0.78 },
+  home: { burst: 0, panels: HOME_DECK, turn: 0, tilt: 1, zoom: 1 },
+  work: { burst: 1.9, panels: 0, turn: -0.4, tilt: 1, zoom: 0.62 },
   about: { burst: 0, panels: 1, turn: 0.45, tilt: 1, zoom: 1.05 },
-  cv: { burst: 0, panels: 0.35, turn: 0, tilt: 0, zoom: 0.92 },
+  cv: { burst: 0, panels: 0.3, turn: 0, tilt: 0, zoom: 0.92 },
 };
 
 function memberMesh(member: (typeof MEMBERS)[number]): {
@@ -195,12 +195,13 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
       );
     });
 
-    panelMaterial.opacity = panelFade * 0.42;
-    panels.forEach((mesh) => {
-      mesh.visible = panelFade > 0.02;
+    panelMaterial.opacity = 0.42;
+    const laid = (i: number) => panelFade > 0.01 && PANELS[i].order <= panelFade;
+    panels.forEach((mesh, i) => {
+      mesh.visible = laid(i);
     });
-    outlines.forEach((line) => {
-      line.visible = panelFade > 0.02;
+    outlines.forEach((line, i) => {
+      line.visible = laid(i);
     });
 
     /* tan(35.26deg): the true isometric elevation her drawings are set at. */
