@@ -5,14 +5,16 @@ import CmsImage from './CmsImage.astro';
 interface Props {
   project: CollectionEntry<'projects'>;
   priority?: boolean;
+  /** Position in the grid, used to stagger the reveal. */
+  index?: number;
 }
 
-const { project, priority = false } = Astro.props;
+const { project, priority = false, index = 0 } = Astro.props;
 const { title, year, location, category, summary, cover } = project.data;
 const meta = [year, location ?? category].filter(Boolean).join(' · ');
 ---
 
-<article>
+<article data-reveal style={`--i: ${index}`}>
   <a href={`/work/${project.id}`} class="group block">
     <div class="frame aspect-[4/3] overflow-hidden">
       <CmsImage

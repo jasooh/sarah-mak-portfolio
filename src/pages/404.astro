@@ -4,11 +4,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Page not found">
   <section class="mx-auto max-w-6xl px-6 py-32 md:px-10">
-    <p class="label text-accent">Error 404</p>
-    <h1 class="mt-4 text-2xl font-normal tracking-tight md:text-3xl">This page does not exist.</h1>
+    <p class="glitch label text-accent">Error 404</p>
+    <h1 data-reveal style="--i: 1" class="mt-4 text-2xl font-normal tracking-tight md:text-3xl">This page does not exist.</h1>
     <a
       href="/"
-      class="label mt-8 inline-block transition-colors hover:text-accent"
+      data-reveal
+      style="--i: 2"
+      class="wipe label mt-8 inline-block transition-colors hover:text-accent"
     >
       ← Back to the start
     </a>

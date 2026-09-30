@@ -5,13 +5,13 @@ import { cv, formatRange } from '../lib/site';
 
 <BaseLayout title="CV">
   <section class="mx-auto max-w-4xl px-6 pt-16 md:px-10 md:pt-24">
-    <div class="flex flex-wrap items-baseline justify-between gap-4">
+    <div data-reveal class="flex flex-wrap items-baseline justify-between gap-4">
       <h1 class="text-2xl font-normal tracking-tight md:text-3xl">Curriculum vitae</h1>
       {
         cv.pdf && (
           <a
             href={cv.pdf}
-            class="label transition-colors hover:text-accent"
+            class="wipe label transition-colors hover:text-accent"
             download
           >
             Download PDF
@@ -24,10 +24,14 @@ import { cv, formatRange } from '../lib/site';
       {
         cv.education.length > 0 && (
           <section>
-            <h2 class="label marker rule pb-3">Education</h2>
+            <h2 data-reveal class="label marker rule pb-3">Education</h2>
             <ul class="mt-7 space-y-8">
-              {cv.education.map((entry) => (
-                <li class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+              {cv.education.map((entry, index) => (
+                <li
+                  data-reveal="x"
+                  style={`--i: ${index}`}
+                  class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]"
+                >
                   <p class="label md:pt-1">{formatRange(entry.start, entry.end)}</p>
                   <div>
                     <p class="text-sm font-medium">{entry.qualification}</p>
@@ -48,10 +52,14 @@ import { cv, formatRange } from '../lib/site';
       {
         cv.experience.length > 0 && (
           <section>
-            <h2 class="label marker rule pb-3">Experience</h2>
+            <h2 data-reveal class="label marker rule pb-3">Experience</h2>
             <ul class="mt-7 space-y-8">
-              {cv.experience.map((entry) => (
-                <li class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+              {cv.experience.map((entry, index) => (
+                <li
+                  data-reveal="x"
+                  style={`--i: ${index}`}
+                  class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]"
+                >
                   <p class="label md:pt-1">{formatRange(entry.start, entry.end)}</p>
                   <div>
                     <p class="text-sm font-medium">{entry.role}</p>
@@ -72,10 +80,14 @@ import { cv, formatRange } from '../lib/site';
       {
         cv.awards.length > 0 && (
           <section>
-            <h2 class="label marker rule pb-3">Awards & recognition</h2>
+            <h2 data-reveal class="label marker rule pb-3">Awards & recognition</h2>
             <ul class="mt-7 space-y-8">
-              {cv.awards.map((entry) => (
-                <li class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+              {cv.awards.map((entry, index) => (
+                <li
+                  data-reveal="x"
+                  style={`--i: ${index}`}
+                  class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]"
+                >
                   <p class="label md:pt-1">{entry.year}</p>
                   <div>
                     <p class="text-sm font-medium">{entry.title}</p>
@@ -92,10 +104,14 @@ import { cv, formatRange } from '../lib/site';
       {
         cv.skills.length > 0 && (
           <section>
-            <h2 class="label marker rule pb-3">Skills</h2>
+            <h2 data-reveal class="label marker rule pb-3">Skills</h2>
             <ul class="mt-7 space-y-8">
-              {cv.skills.map((entry) => (
-                <li class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+              {cv.skills.map((entry, index) => (
+                <li
+                  data-reveal="x"
+                  style={`--i: ${index}`}
+                  class="marker grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]"
+                >
                   <p class="label md:pt-1">{entry.group}</p>
                   <p class="text-sm leading-relaxed">{entry.items.join(', ')}</p>
                 </li>

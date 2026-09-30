@@ -27,7 +27,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
                 href={item.href}
                 aria-current={isCurrent(item.href) ? 'page' : undefined}
                 class:list={[
-                  'text-sm tracking-[0.08em] uppercase transition-colors hover:text-accent',
+                  'wipe text-sm tracking-[0.08em] uppercase transition-colors hover:text-accent',
                   isCurrent(item.href) ? 'marker text-ink' : 'text-muted',
                 ]}
               >

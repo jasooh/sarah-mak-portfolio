@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import { getImage } from 'astro:assets';
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -32,6 +33,9 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
@@ -61,6 +65,8 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
 
     <meta name="theme-color" content="#e4e0cd" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#4b4840" media="(prefers-color-scheme: dark)" />
+
+    <ClientRouter />
   </head>
 
   <body class="flex min-h-screen flex-col">
@@ -70,5 +76,37 @@ const shareImageUrl = shareImage ? new URL(shareImage.src, Astro.site ?? Astro.u
       <slot />
     </main>
     <SiteFooter />
+
+    <script>
+      function initReveals() {
+        const items = document.querySelectorAll('[data-reveal]:not(.is-revealed)');
+        if (items.length === 0) return;
+
+        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (still || !('IntersectionObserver' in window)) {
+          items.forEach((el) => el.classList.add('is-revealed'));
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-revealed');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -6% 0px', threshold: 0.04 },
+        );
+
+        items.forEach((el) => observer.observe(el));
+      }
+
+      initReveals();
+      // after-swap fires as soon as the new DOM is in place, so the cascade
+      // runs *during* the page transition rather than after it finishes.
+      document.addEventListener('astro:after-swap', initReveals);
+      document.addEventListener('astro:page-load', initReveals);
+    </script>
   </body>
 </html>
