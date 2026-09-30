@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/*
+  Design tokens. The semantic colours are declared as plain custom properties
+  in :root so they can be swapped for dark mode, then exposed to Tailwind with
+  `@theme inline` — that keeps utilities like `bg-paper` or `text-muted`
+  pointing at the variable rather than baking in a literal value.
+*/
+@theme inline {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+
+  --color-paper: var(--paper);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+}
+
+:root {
+  --paper: #ffffff;
+  --paper-sunk: #f4f4f2;
+  --ink: #17181a;
+  --muted: #6b6f76;
+  --line: #e2e2de;
+  --accent: #17181a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #101113;
+    --paper-sunk: #17181a;
+    --ink: #f2f2f0;
+    --muted: #9ba0a8;
+    --line: #2a2c30;
+    --accent: #f2f2f0;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--ink);
+    color: var(--paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* Small uppercase labels used for project metadata and section headings. */
+  .label {
+    @apply text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-muted;
+  }
+
+  /* Long-form Markdown body copy (project descriptions, about, etc.). */
+  .prose-page {
+    @apply max-w-[62ch] text-[0.9375rem] leading-[1.75] text-ink/85;
+  }
+  .prose-page > * + * {
+    @apply mt-5;
+  }
+  .prose-page h2 {
+    @apply mt-12 text-lg font-medium tracking-tight text-ink;
+  }
+  .prose-page h3 {
+    @apply mt-10 text-base font-medium tracking-tight text-ink;
+  }
+  .prose-page a {
+    @apply underline decoration-line underline-offset-4 transition-colors hover:decoration-ink;
+  }
+  .prose-page ul {
+    @apply list-disc space-y-1.5 pl-5;
+  }
+  .prose-page ol {
+    @apply list-decimal space-y-1.5 pl-5;
+  }
+  .prose-page blockquote {
+    @apply border-l border-line pl-5 text-muted italic;
+  }
+  .prose-page img {
+    @apply my-8 w-full;
+  }
+  .prose-page hr {
+    @apply my-12 border-line;
+  }
+}

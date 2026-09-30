@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { cv, formatRange } from '../lib/site';
+---
+
+<BaseLayout title="CV">
+  <section class="mx-auto max-w-4xl px-6 pt-16 md:px-10 md:pt-24">
+    <div class="flex flex-wrap items-baseline justify-between gap-4">
+      <h1 class="text-2xl font-normal tracking-tight md:text-3xl">Curriculum vitae</h1>
+      {
+        cv.pdf && (
+          <a
+            href={cv.pdf}
+            class="text-sm underline decoration-line underline-offset-4 transition-colors hover:decoration-ink"
+            download
+          >
+            Download PDF
+          </a>
+        )
+      }
+    </div>
+
+    <div class="mt-16 space-y-16">
+      {
+        cv.education.length > 0 && (
+          <section>
+            <h2 class="label border-b border-line pb-3">Education</h2>
+            <ul class="mt-6 space-y-8">
+              {cv.education.map((entry) => (
+                <li class="grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+                  <p class="label md:pt-1">{formatRange(entry.start, entry.end)}</p>
+                  <div>
+                    <p class="text-sm font-medium">{entry.qualification}</p>
+                    {(entry.institution || entry.location) && (
+                      <p class="mt-0.5 text-sm text-muted">
+                        {[entry.institution, entry.location].filter(Boolean).join(', ')}
+                      </p>
+                    )}
+                    {entry.notes && <p class="mt-2 text-sm leading-relaxed text-muted">{entry.notes}</p>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        cv.experience.length > 0 && (
+          <section>
+            <h2 class="label border-b border-line pb-3">Experience</h2>
+            <ul class="mt-6 space-y-8">
+              {cv.experience.map((entry) => (
+                <li class="grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+                  <p class="label md:pt-1">{formatRange(entry.start, entry.end)}</p>
+                  <div>
+                    <p class="text-sm font-medium">{entry.role}</p>
+                    {(entry.organisation || entry.location) && (
+                      <p class="mt-0.5 text-sm text-muted">
+                        {[entry.organisation, entry.location].filter(Boolean).join(', ')}
+                      </p>
+                    )}
+                    {entry.notes && <p class="mt-2 text-sm leading-relaxed text-muted">{entry.notes}</p>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        cv.awards.length > 0 && (
+          <section>
+            <h2 class="label border-b border-line pb-3">Awards & recognition</h2>
+            <ul class="mt-6 space-y-8">
+              {cv.awards.map((entry) => (
+                <li class="grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+                  <p class="label md:pt-1">{entry.year}</p>
+                  <div>
+                    <p class="text-sm font-medium">{entry.title}</p>
+                    {entry.issuer && <p class="mt-0.5 text-sm text-muted">{entry.issuer}</p>}
+                    {entry.notes && <p class="mt-2 text-sm leading-relaxed text-muted">{entry.notes}</p>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        cv.skills.length > 0 && (
+          <section>
+            <h2 class="label border-b border-line pb-3">Skills</h2>
+            <ul class="mt-6 space-y-8">
+              {cv.skills.map((entry) => (
+                <li class="grid gap-x-8 gap-y-1 md:grid-cols-[10rem_minmax(0,1fr)]">
+                  <p class="label md:pt-1">{entry.group}</p>
+                  <p class="text-sm leading-relaxed">{entry.items.join(', ')}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

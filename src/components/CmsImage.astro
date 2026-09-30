@@ -1,0 +1,55 @@
+---
+import { Image } from 'astro:assets';
+import { resolveImage } from '../lib/images';
+
+interface Props {
+  src?: string | null;
+  alt?: string;
+  class?: string;
+  /** CSS aspect-ratio, used to hold space when there is no image yet. */
+  aspect?: string;
+  layout?: 'constrained' | 'full-width' | 'fixed' | 'none';
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+}
+
+const {
+  src,
+  alt = '',
+  class: className = '',
+  aspect = '4 / 3',
+  layout,
+  sizes,
+  loading,
+  priority = false,
+} = Astro.props;
+
+const image = resolveImage(src);
+
+if (src && !image) {
+  console.warn(`[CmsImage] No file found for "${src}" — check the upload in src/assets/media.`);
+}
+---
+
+{
+  image ? (
+    <Image
+      src={image}
+      alt={alt}
+      class={className}
+      layout={layout}
+      sizes={sizes}
+      loading={priority ? 'eager' : (loading ?? 'lazy')}
+      fetchpriority={priority ? 'high' : undefined}
+    />
+  ) : (
+    <div
+      class:list={['flex items-center justify-center bg-paper-sunk', className]}
+      style={`aspect-ratio: ${aspect}`}
+      aria-hidden="true"
+    >
+      <span class="label">Image</span>
+    </div>
+  )
+}

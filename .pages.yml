@@ -1,0 +1,325 @@
+# Pages CMS configuration — https://pagescms.org/docs/configuration/
+#
+# Connect this repository at https://app.pagescms.org to edit everything below
+# in a browser. Images upload into src/assets/media so Astro can optimise them;
+# PDFs go to public/files and are served as-is.
+
+media:
+  - name: images
+    label: Images
+    input: src/assets/media
+    output: /src/assets/media
+    categories: [image]
+    rename: safe
+  - name: docs
+    label: Documents
+    input: public/files
+    output: /files
+    categories: [document]
+    rename: safe
+
+content:
+  - name: projects
+    label: Projects
+    type: collection
+    path: src/content/projects
+    format: yaml-frontmatter
+    filename:
+      template: '{primary}.md'
+      field: create
+    view:
+      fields: [title, year, category, featured, draft]
+      primary: title
+      sort: [order, year, title]
+      search: [title, summary, location]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+        options:
+          maxlength: 120
+      - name: year
+        label: Year
+        type: string
+        description: A single year or a range, e.g. 2025 or 2024–25.
+        options:
+          maxlength: 20
+      - name: location
+        label: Location
+        type: string
+      - name: category
+        label: Project type
+        type: select
+        options:
+          placeholder: Select a type
+          values:
+            - Studio project
+            - Competition entry
+            - Live build
+            - Research
+            - Drawing study
+            - Practice work
+      - name: role
+        label: Role
+        type: string
+        description: e.g. Individual work, Group of three, Architectural assistant.
+      - name: summary
+        label: Summary
+        type: text
+        description: One line, shown on the project card and under the title.
+        options:
+          maxlength: 200
+      - name: cover
+        label: Cover image
+        type: image
+        description: Used on the cards, at the top of the project page, and when sharing.
+        options:
+          media: images
+      - name: gallery
+        label: Gallery
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{caption}'
+        fields:
+          - name: image
+            label: Image
+            type: image
+            required: true
+            options:
+              media: images
+          - name: caption
+            label: Caption
+            type: string
+      - name: featured
+        label: Show on home page
+        type: boolean
+        default: true
+      - name: order
+        label: Sort order
+        type: number
+        description: Lower numbers appear first. Leave empty to sort by year.
+        options:
+          min: 0
+      - name: draft
+        label: Draft
+        type: boolean
+        default: false
+        description: Drafts are hidden from the published site.
+      - name: body
+        label: Description
+        type: rich-text
+
+  - name: about
+    label: About page
+    type: file
+    path: src/content/pages/about.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Page title
+        type: string
+        required: true
+      - name: headline
+        label: Headline
+        type: text
+        description: One or two sentences, shown above the bio.
+      - name: portrait
+        label: Portrait
+        type: image
+        options:
+          media: images
+      - name: portrait_alt
+        label: Portrait alt text
+        type: string
+        description: Describes the photo for screen readers.
+      - name: body
+        label: Bio
+        type: rich-text
+
+  - name: cv
+    label: CV
+    type: file
+    path: src/data/cv.yml
+    format: yaml
+    fields:
+      - name: pdf
+        label: CV as PDF
+        type: file
+        description: Optional download link shown at the top of the CV page.
+        options:
+          media: docs
+          extensions: [pdf]
+      - name: education
+        label: Education
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{qualification} — {institution}'
+        fields:
+          - name: qualification
+            label: Qualification
+            type: string
+            required: true
+          - name: institution
+            label: Institution
+            type: string
+          - name: location
+            label: Location
+            type: string
+          - name: start
+            label: From
+            type: string
+          - name: end
+            label: To
+            type: string
+            description: Use "Present" for current studies.
+          - name: notes
+            label: Notes
+            type: text
+      - name: experience
+        label: Experience
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{role} — {organisation}'
+        fields:
+          - name: role
+            label: Role
+            type: string
+            required: true
+          - name: organisation
+            label: Organisation
+            type: string
+          - name: location
+            label: Location
+            type: string
+          - name: start
+            label: From
+            type: string
+          - name: end
+            label: To
+            type: string
+          - name: notes
+            label: Notes
+            type: text
+      - name: awards
+        label: Awards & recognition
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{title}'
+        fields:
+          - name: title
+            label: Title
+            type: string
+            required: true
+          - name: issuer
+            label: Awarded by
+            type: string
+          - name: year
+            label: Year
+            type: string
+          - name: notes
+            label: Notes
+            type: text
+      - name: skills
+        label: Skills
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{group}'
+        fields:
+          - name: group
+            label: Group
+            type: string
+            required: true
+            description: e.g. Drawing, Visualisation, Making.
+          - name: items
+            label: Skills
+            type: string
+            list: true
+
+  - name: site
+    label: Site settings
+    type: file
+    path: src/data/site.yml
+    format: yaml
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
+      - name: role
+        label: Role
+        type: string
+        description: Shown next to the name in the header.
+      - name: tagline
+        label: Tagline
+        type: text
+        description: The large line of text on the home page.
+      - name: intro
+        label: Introduction
+        type: text
+        description: Short paragraph below the tagline on the home page.
+      - name: email
+        label: Email
+        type: string
+        pattern:
+          regex: '^$|^[^@\s]+@[^@\s]+\.[^@\s]+$'
+          message: Enter a valid email address.
+      - name: location
+        label: Location
+        type: string
+      - name: social
+        label: Social links
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{label}'
+        fields:
+          - name: label
+            label: Label
+            type: string
+            required: true
+          - name: url
+            label: URL
+            type: string
+            required: true
+            pattern:
+              regex: '^https?://.+'
+              message: Must start with http:// or https://
+      - name: seo
+        label: Sharing & search
+        type: object
+        fields:
+          - name: description
+            label: Default description
+            type: text
+            options:
+              maxlength: 200
+          - name: image
+            label: Default share image
+            type: image
+            options:
+              media: images
+      - name: footer_note
+        label: Footer note
+        type: string
+
+settings:
+  commit:
+    templates:
+      create: 'content: add {filename}'
+      update: 'content: update {filename}'
+      delete: 'content: remove {filename}'

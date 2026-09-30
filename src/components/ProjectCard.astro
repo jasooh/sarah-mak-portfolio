@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import CmsImage from './CmsImage.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  priority?: boolean;
+}
+
+const { project, priority = false } = Astro.props;
+const { title, year, location, category, summary, cover } = project.data;
+const meta = [year, location ?? category].filter(Boolean).join(' · ');
+---
+
+<article>
+  <a href={`/work/${project.id}`} class="group block">
+    <CmsImage
+      src={cover}
+      alt={title}
+      class="w-full bg-paper-sunk object-cover transition-opacity duration-300 group-hover:opacity-85"
+      aspect="4 / 3"
+      layout="full-width"
+      priority={priority}
+    />
+
+    <div class="mt-4 space-y-1">
+      <h3 class="text-sm font-medium tracking-tight">{title}</h3>
+      {meta && <p class="label">{meta}</p>}
+      {summary && <p class="pt-1 text-sm leading-relaxed text-muted">{summary}</p>}
+    </div>
+  </a>
+</article>

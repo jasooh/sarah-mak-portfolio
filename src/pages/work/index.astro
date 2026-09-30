@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getProjects } from '../../lib/projects';
+
+const projects = await getProjects();
+---
+
+<BaseLayout title="Work" description="Architecture and design projects.">
+  <section class="mx-auto max-w-6xl px-6 pt-16 md:px-10 md:pt-24">
+    <h1 class="text-2xl font-normal tracking-tight md:text-3xl">Work</h1>
+    <p class="label mt-3">{projects.length} {projects.length === 1 ? 'project' : 'projects'}</p>
+
+    {
+      projects.length > 0 ? (
+        <div class="mt-14 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project, index) => (
+            <ProjectCard project={project} priority={index < 3} />
+          ))}
+        </div>
+      ) : (
+        <p class="mt-10 text-sm text-muted">Nothing published yet.</p>
+      )
+    }
+  </section>
+</BaseLayout>

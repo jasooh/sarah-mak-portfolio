@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getFeaturedProjects } from '../lib/projects';
+import { site } from '../lib/site';
+
+const projects = await getFeaturedProjects();
+---
+
+<BaseLayout>
+  <section class="mx-auto max-w-6xl px-6 pt-20 pb-16 md:px-10 md:pt-32 md:pb-24">
+    <h1 class="max-w-3xl text-2xl leading-[1.25] font-normal tracking-tight md:text-4xl">
+      {site.tagline ?? site.name}
+    </h1>
+    {site.intro && <p class="prose-page mt-8">{site.intro}</p>}
+  </section>
+
+  <section class="mx-auto max-w-6xl px-6 md:px-10">
+    <div class="flex items-baseline justify-between border-b border-line pb-3">
+      <h2 class="label">Selected work</h2>
+      <a href="/work" class="text-sm text-muted transition-colors hover:text-ink">All projects</a>
+    </div>
+
+    {
+      projects.length > 0 ? (
+        <div class="mt-10 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project, index) => (
+            <ProjectCard project={project} priority={index < 3} />
+          ))}
+        </div>
+      ) : (
+        <p class="mt-10 text-sm text-muted">
+          No projects yet. Add one in the CMS, or drop a Markdown file into
+          <code class="mx-1">src/content/projects</code>.
+        </p>
+      )
+    }
+  </section>
+</BaseLayout>

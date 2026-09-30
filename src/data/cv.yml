@@ -1,0 +1,36 @@
+pdf: ''
+education:
+  - qualification: BA (Hons) Architecture
+    institution: University name
+    location: City
+    start: '2023'
+    end: 'Present'
+    notes: ''
+experience:
+  - role: Architectural Assistant (Placement)
+    organisation: Practice name
+    location: City
+    start: '2025'
+    end: '2025'
+    notes: ''
+awards:
+  - title: Award or commendation
+    issuer: Awarding body
+    year: '2025'
+    notes: ''
+skills:
+  - group: Drawing
+    items:
+      - AutoCAD
+      - Rhino
+      - Revit
+  - group: Visualisation
+    items:
+      - Illustrator
+      - InDesign
+      - Photoshop
+      - Enscape
+  - group: Making
+    items:
+      - Physical modelmaking
+      - Laser cutting
