@@ -1,4 +1,3 @@
-pdf: ''
 expertise:
   - name: Rhino
     duration: 6 years
@@ -10,24 +9,29 @@ expertise:
     duration: 3 years
   - name: Adobe Illustrator
     duration: 3 years
+  - name: RhinoCAM
+    duration: 3 years
+  - name: ArcGIS
+    duration: 4 months
 academic:
   - qualification: Architectural Studies, Bachelor of Arts
-    institution: University name
-    faculty: Faculty of Architecture, Landscape, and Design
+    institution: University of Toronto
+    faculty: John H. Daniels Faculty of Architecture, Landscape, and Design
     start: September 2020
     end: June 2024
-    notes: ''
+  - qualification: Masters of Architecture
+    institution: University of Toronto
+    faculty: John H. Daniels Faculty of Architecture, Landscape, and Design
+    start: September 2024
+    end: Present
 activities:
   - role: Advocacy Director
     organisation: Student architecture alliance
     start: September 2022
     end: June 2024
-    notes: ''
 experience:
   - role: Architecture Assistant, Internship
     organisation: Practice name
     location: City
     start: May 2023
     end: September 2023
-    notes: ''
-awards: []
