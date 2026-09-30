@@ -112,6 +112,45 @@ if (iconSource) {
     </main>
     <SiteFooter />
 
+    <dialog class="lightbox" aria-label="Enlarged image">
+      <img alt="" />
+      <button type="button" class="label lightbox-close">Close ✕</button>
+    </dialog>
+
+    <script>
+      function initLightbox() {
+        const dialog = document.querySelector('dialog.lightbox');
+        if (!(dialog instanceof HTMLDialogElement)) return;
+        const full = dialog.querySelector('img');
+        if (!(full instanceof HTMLImageElement)) return;
+
+        document.querySelectorAll('img[data-zoom]').forEach((node) => {
+          if (!(node instanceof HTMLImageElement) || node.dataset.zoomBound) return;
+          node.dataset.zoomBound = 'true';
+          node.style.cursor = 'zoom-in';
+          node.addEventListener('click', () => {
+            full.src = node.dataset.zoom ?? node.currentSrc;
+            full.alt = node.alt;
+            dialog.showModal();
+          });
+        });
+
+        if (dialog.dataset.bound) return;
+        dialog.dataset.bound = 'true';
+        dialog.addEventListener('click', (event) => {
+          if (event.target === dialog || (event.target as HTMLElement).closest('.lightbox-close')) {
+            dialog.close();
+          }
+        });
+        dialog.addEventListener('close', () => {
+          full.removeAttribute('src');
+        });
+      }
+
+      initLightbox();
+      document.addEventListener('astro:after-swap', initLightbox);
+    </script>
+
     <script>
       function initReveals() {
         const items = document.querySelectorAll('[data-reveal]:not(.is-revealed)');
