@@ -50,6 +50,7 @@
     --muted: #bdb8a4;
     --line: #7b7768;
     --accent: #e07a5f;
+    --panel: #8d8279;
 
     --grain: 0.05;
     --backdrop-alpha: 0.11;
@@ -131,8 +132,11 @@
 
   .backdrop svg {
     transition: opacity 500ms ease;
-    width: min(74vh, 58vw);
-    height: auto;
+    /* The exploded stack is far taller than wide, so height drives the fit,
+       and it takes back most of the host's bleed. */
+    height: min(90vh, 190vw);
+    width: auto;
+    margin-right: 6vw;
     overflow: visible;
     color: var(--ink);
     opacity: var(--backdrop-alpha);
@@ -143,7 +147,8 @@
       margin-right: -28vw;
     }
     .backdrop svg {
-      width: 116vw;
+      height: 92vh;
+      margin-right: 20vw;
       opacity: calc(var(--backdrop-alpha) * 0.55);
     }
     .backdrop-gl {
@@ -153,34 +158,23 @@
       opacity: calc(var(--backdrop-alpha) * 0.9);
     }
   }
-  .backdrop :where(.slab, .col, .grid) {
+  .backdrop .frame-lines path {
     stroke: currentColor;
+    stroke-width: 1.1;
     vector-effect: non-scaling-stroke;
   }
-  .backdrop .slab {
-    stroke-width: 1.1;
-  }
-  .backdrop :where(.col, .grid) {
+  .backdrop .frame-fine path {
     stroke-width: 0.7;
+    opacity: 0.48;
   }
-  .backdrop .grid {
-    opacity: 0.45;
+  .backdrop .frame-leader path {
+    stroke-width: 0.7;
+    stroke-dasharray: 2.2 2.2;
+    opacity: 0.35;
   }
-
-  .backdrop .floor {
-    transform: translateY(calc(var(--n) * var(--gap, 60px) * -1));
-  }
-  .backdrop .col {
-    /* Columns are vertical on screen, so storey height scales them directly. */
-    transform: scaleY(calc(var(--gap, 60px) / 60px * 4));
-    transform-origin: 0 100%;
-  }
-  .backdrop .bld {
-    transform: translateY(var(--lift, 60px));
-  }
-
-  .backdrop .ridge {
-    opacity: var(--ridge, 0.45);
+  .backdrop .frame-panels path {
+    fill: var(--panel);
+    opacity: 0.4;
   }
 
   .grain {
@@ -363,18 +357,6 @@
 */
 
 @media (prefers-reduced-motion: no-preference) {
-  .backdrop .floor,
-  .backdrop .col,
-  .backdrop .bld,
-  .backdrop .ridge {
-    transition:
-      transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .backdrop .floor {
-    transition-delay: calc(var(--n) * 40ms);
-  }
-
   ::view-transition-old(root) {
     animation: yorha-exit var(--dur-fast) var(--ease-sharp) both;
   }

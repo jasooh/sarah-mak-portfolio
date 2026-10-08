@@ -1,79 +1,62 @@
 import {
-  BoxGeometry,
   BufferGeometry,
   Color,
   DoubleSide,
-  EdgesGeometry,
   Float32BufferAttribute,
   Group,
   LineBasicMaterial,
+  LineDashedMaterial,
   LineSegments,
   Mesh,
   MeshBasicMaterial,
   OrthographicCamera,
   PlaneGeometry,
   Scene,
-  Vector3,
   WebGLRenderer,
 } from 'three';
-import { MEMBERS, PANELS, SECTION, TOP } from './frame';
+import {
+  BOTTOM,
+  FINE,
+  GUIDES,
+  MEMBERS,
+  PANELS,
+  TIER_LIFT,
+  TOP,
+  type Member,
+} from './frame';
 
 interface State {
-  burst: number;
-  panels: number;
+  /* 0 assembled, 1 pulled fully apart. */
+  explode: number;
+  /* How much of the decking is laid. */
+  build: number;
   turn: number;
   tilt: number;
   zoom: number;
 }
 
 const ROUTES: Record<string, State> = {
-  home: { burst: 0, panels: 1, turn: 0, tilt: 1, zoom: 1 },
-  work: { burst: 1.9, panels: 1, turn: -0.4, tilt: 1, zoom: 0.62 },
-  about: { burst: 0, panels: 1, turn: 0.45, tilt: 1, zoom: 1.05 },
-  cv: { burst: 0, panels: 1, turn: 0, tilt: 0, zoom: 0.92 },
+  home: { explode: 0.34, build: 1, turn: 0, tilt: 1, zoom: 1.05 },
+  work: { explode: 1, build: 1, turn: -0.38, tilt: 1, zoom: 0.74 },
+  project: { explode: 0.62, build: 1, turn: 0.22, tilt: 0.92, zoom: 0.86 },
+  about: { explode: 0.12, build: 1, turn: 0.46, tilt: 1, zoom: 1.12 },
+  cv: { explode: 0.85, build: 0.34, turn: -0.1, tilt: 0.06, zoom: 0.85 },
 };
 
-function memberMesh(member: (typeof MEMBERS)[number]): {
-  edges: LineSegments;
-  home: Vector3;
-  push: Vector3;
-} {
-  const a = new Vector3(...member.a);
-  const b = new Vector3(...member.b);
-  const span = new Vector3().subVectors(b, a);
-  const length = span.length() + SECTION;
-  const mid = new Vector3().addVectors(a, b).multiplyScalar(0.5);
+const VIEW = 120;
+const ROOF_TIER = TIER_LIFT.length - 1;
 
-  const axis = span.clone().normalize();
-  const size = new Vector3(
-    Math.abs(axis.x) > 0.5 ? length : SECTION,
-    Math.abs(axis.y) > 0.5 ? length : SECTION,
-    Math.abs(axis.z) > 0.5 ? length : SECTION,
-  );
-
-  const box = new BoxGeometry(size.x, size.y, size.z);
-  const edges = new LineSegments(new EdgesGeometry(box), new LineBasicMaterial());
-  edges.position.copy(mid);
-  box.dispose();
-
-  /* Proportional to distance from the centre, so the parts stay in formation
-     the way an exploded axonometric does. */
-  const push = mid.clone().sub(new Vector3(0, TOP / 2, 0)).multiplyScalar(0.5);
-  if (member.kind === 'joist') push.y -= 5;
-  if (member.kind === 'mullion') push.multiplyScalar(1.3);
-
-  return { edges, home: mid.clone(), push };
+function segments(list: Member[]): BufferGeometry {
+  const position: number[] = [];
+  for (const m of list) position.push(...m.a, ...m.b);
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new Float32BufferAttribute(position, 3));
+  return geometry;
 }
 
-function inkColour(): Color {
-  const value = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
-  return new Color(value || '#57544a');
-}
-
-/* The thesis drawings infill the decks in a muted taupe, not the accent. */
-function panelColour(): Color {
-  const value = getComputedStyle(document.documentElement).getPropertyValue('--panel').trim();
-  return new Color(value || '#b3a79f');
+function cssColour(name: string, fallback: string): Color {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return new Color(value || fallback);
 }
 
 export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => void) | null {
@@ -88,56 +71,51 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
   const scene = new Scene();
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
 
-  const lineMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.85 });
-  const secondaryMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.4 });
-  const panelMaterial = new MeshBasicMaterial({ transparent: true, opacity: 0, side: DoubleSide });
+  const heavy = new LineBasicMaterial({ transparent: true, opacity: 0.88 });
+  const hairline = new LineBasicMaterial({ transparent: true, opacity: 0.42 });
+  const leader = new LineDashedMaterial({ transparent: true, opacity: 0, dashSize: 2.2, gapSize: 2.2 });
+  const deck = new MeshBasicMaterial({ transparent: true, opacity: 0.4, side: DoubleSide });
 
   const frame = new Group();
-  frame.position.y = -TOP / 2;
   scene.add(frame);
 
-  const parts = MEMBERS.map((member) => {
-    const part = memberMesh(member);
-    const primary = member.kind === 'post' || member.kind === 'beam';
-    part.edges.material = primary ? lineMaterial : secondaryMaterial;
-    frame.add(part.edges);
-    return part;
+  const tiers = TIER_LIFT.map(() => {
+    const group = new Group();
+    frame.add(group);
+    return group;
   });
 
-  const panels = PANELS.map((panel) => {
+  tiers.forEach((group, tier) => {
+    const mine = MEMBERS.filter((m) => m.tier === tier);
+    for (const [material, list] of [
+      [heavy, mine.filter((m) => !FINE.has(m.kind))],
+      [hairline, mine.filter((m) => FINE.has(m.kind))],
+    ] as const) {
+      if (list.length > 0) group.add(new LineSegments(segments(list), material));
+    }
+  });
+
+  const guideGeometry = new BufferGeometry();
+  guideGeometry.setAttribute('position', new Float32BufferAttribute(new Float32Array(GUIDES.length * 6), 3));
+  const guideLines = new LineSegments(guideGeometry, leader);
+  guideLines.frustumCulled = false;
+  frame.add(guideLines);
+
+  const boards = PANELS.map((panel) => {
     const geometry = new PlaneGeometry(panel.x1 - panel.x0, panel.z1 - panel.z0);
-    const mesh = new Mesh(geometry, panelMaterial);
+    const mesh = new Mesh(geometry, deck);
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.set((panel.x0 + panel.x1) / 2, panel.y, (panel.z0 + panel.z1) / 2);
-    frame.add(mesh);
+    tiers[panel.tier].add(mesh);
     return mesh;
   });
 
-  const outlines = PANELS.map((panel) => {
-    const w = panel.x1 - panel.x0;
-    const d = panel.z1 - panel.z0;
-    const y = panel.y;
-    const x = (panel.x0 + panel.x1) / 2;
-    const z = (panel.z0 + panel.z1) / 2;
-    const p = [
-      -w / 2, 0, -d / 2, w / 2, 0, -d / 2,
-      w / 2, 0, -d / 2, w / 2, 0, d / 2,
-      w / 2, 0, d / 2, -w / 2, 0, d / 2,
-      -w / 2, 0, d / 2, -w / 2, 0, -d / 2,
-    ];
-    const geometry = new BufferGeometry();
-    geometry.setAttribute('position', new Float32BufferAttribute(p, 3));
-    const line = new LineSegments(geometry, secondaryMaterial);
-    line.position.set(x, y, z);
-    frame.add(line);
-    return line;
-  });
-
   function applyTheme() {
-    const ink = inkColour();
-    lineMaterial.color = ink;
-    secondaryMaterial.color = ink;
-    panelMaterial.color = panelColour();
+    const ink = cssColour('--ink', '#57544a');
+    heavy.color = ink;
+    hairline.color = ink;
+    leader.color = ink;
+    deck.color = cssColour('--panel', '#b3a79f');
   }
   applyTheme();
 
@@ -145,7 +123,7 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     const { clientWidth: w, clientHeight: h } = canvas;
     if (w === 0 || h === 0) return;
     renderer.setSize(w, h, false);
-    const view = 104 / zoom;
+    const view = VIEW / zoom;
     const aspect = w / h;
     camera.left = (-view * aspect) / 2;
     camera.right = (view * aspect) / 2;
@@ -154,8 +132,8 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     camera.updateProjectionMatrix();
   }
 
-  let burst = 0;
-  let panelFade = 0;
+  let explode = 0;
+  let build = 0;
   let turn = 0;
   let tilt = 1;
   let zoom = 1;
@@ -186,8 +164,8 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
       return Math.abs(to - next) < 0.0005 ? to : next;
     };
 
-    burst = step(burst, target.burst);
-    panelFade = step(panelFade, target.panels);
+    explode = step(explode, target.explode);
+    build = step(build, target.build);
     turn = step(turn, target.turn);
     tilt = step(tilt, target.tilt);
     const previousZoom = zoom;
@@ -197,21 +175,25 @@ export function startBackdrop(canvas: HTMLCanvasElement): ((route: string) => vo
     impulse *= Math.exp(-dt * 3);
     spin += dt * 0.05 + impulse * dt * 1.1;
 
-    parts.forEach((part) => {
-      part.edges.position.set(
-        part.home.x + part.push.x * burst,
-        part.home.y + part.push.y * burst,
-        part.home.z + part.push.z * burst,
-      );
+    const lift = (tier: number) => TIER_LIFT[tier] * explode;
+    tiers.forEach((group, tier) => {
+      group.position.y = lift(tier);
     });
+    /* Recentre as the stack grows, so it never drifts out of the view. */
+    frame.position.y = -(BOTTOM + TOP + lift(ROOF_TIER)) / 2;
 
-    panelMaterial.opacity = 0.42;
-    const laid = (i: number) => panelFade > 0.01 && PANELS[i].order <= panelFade;
-    panels.forEach((mesh, i) => {
-      mesh.visible = laid(i);
+    const guidePos = guideGeometry.getAttribute('position');
+    GUIDES.forEach((guide, i) => {
+      guidePos.setXYZ(i * 2, guide.a[0], guide.a[1] + lift(ROOF_TIER), guide.a[2]);
+      guidePos.setXYZ(i * 2 + 1, guide.b[0], guide.b[1] + lift(ROOF_TIER - 1), guide.b[2]);
     });
-    outlines.forEach((line, i) => {
-      line.visible = laid(i);
+    guidePos.needsUpdate = true;
+    guideLines.computeLineDistances();
+    leader.opacity = 0.3 * Math.min(1, Math.max(0, (explode - 0.08) * 4));
+
+    const laid = (i: number) => build > 0.01 && PANELS[i].order <= build;
+    boards.forEach((mesh, i) => {
+      mesh.visible = laid(i);
     });
 
     /* tan(35.26deg): the true isometric elevation her drawings are set at. */

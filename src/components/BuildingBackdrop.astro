@@ -1,13 +1,18 @@
 ---
-import { MEMBERS, PANELS, iso } from '../lib/frame';
+import { FINE, GUIDES, MEMBERS, PANELS, TIER_LIFT, iso } from '../lib/frame';
 
-const line = (m: (typeof MEMBERS)[number]) => {
-  const [x1, y1] = iso(...m.a);
-  const [x2, y2] = iso(...m.b);
-  return `M${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)}`;
-};
-const primary = MEMBERS.filter((m) => m.kind === 'post' || m.kind === 'beam').map(line);
-const secondary = MEMBERS.filter((m) => m.kind !== 'post' && m.kind !== 'beam').map(line);
+/* The static drawing is the exploded state, as the thesis sheet is. */
+const lift = (tier: number) => TIER_LIFT[tier];
+const ROOF_TIER = TIER_LIFT.length - 1;
+
+const at = (p: [number, number, number], tier: number) => iso(p[0], p[1] + lift(tier), p[2]);
+const seg = (a: [number, number], b: [number, number]) =>
+  `M${a[0].toFixed(1)},${a[1].toFixed(1)} L${b[0].toFixed(1)},${b[1].toFixed(1)}`;
+
+const line = (m: (typeof MEMBERS)[number]) => seg(at(m.a, m.tier), at(m.b, m.tier));
+const heavy = MEMBERS.filter((m) => !FINE.has(m.kind)).map(line);
+const hairlines = MEMBERS.filter((m) => FINE.has(m.kind)).map(line);
+const leaders = GUIDES.map((g) => seg(at(g.a, ROOF_TIER), at(g.b, ROOF_TIER - 1)));
 
 const quads = PANELS.map((p) => {
   const corners: [number, number, number][] = [
@@ -16,12 +21,12 @@ const quads = PANELS.map((p) => {
     [p.x1, p.y, p.z1],
     [p.x0, p.y, p.z1],
   ];
-  return 'M' + corners.map((c) => iso(...c).map((n) => n.toFixed(1)).join(',')).join(' L') + ' Z';
+  return 'M' + corners.map((c) => at(c, p.tier).map((n) => n.toFixed(1)).join(',')).join(' L') + ' Z';
 });
 
 const points = [
-  ...MEMBERS.flatMap((m) => [iso(...m.a), iso(...m.b)]),
-  ...PANELS.flatMap((p) => [iso(p.x0, p.y, p.z0), iso(p.x1, p.y, p.z1)]),
+  ...MEMBERS.flatMap((m) => [at(m.a, m.tier), at(m.b, m.tier)]),
+  ...PANELS.flatMap((p) => [at([p.x0, p.y, p.z0], p.tier), at([p.x1, p.y, p.z1], p.tier)]),
 ];
 const xs = points.map((p) => p[0]);
 const ys = points.map((p) => p[1]);
@@ -41,10 +46,13 @@ const box = [
       {quads.map((d) => <path d={d} />)}
     </g>
     <g class="frame-lines">
-      {primary.map((d) => <path d={d} />)}
+      {heavy.map((d) => <path d={d} />)}
     </g>
-    <g class="frame-lines frame-secondary">
-      {secondary.map((d) => <path d={d} />)}
+    <g class="frame-lines frame-fine">
+      {hairlines.map((d) => <path d={d} />)}
+    </g>
+    <g class="frame-lines frame-leader">
+      {leaders.map((d) => <path d={d} />)}
     </g>
   </svg>
 </div>
@@ -61,7 +69,9 @@ const box = [
 
     function routeName() {
       const path = location.pathname.replace(/\/+$/, '') || '/';
-      return path === '/' ? 'home' : path.split('/')[1];
+      if (path === '/') return 'home';
+      const parts = path.split('/').filter(Boolean);
+      return parts[0] === 'work' && parts.length > 1 ? 'project' : parts[0];
     }
 
     const idle = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 400));
