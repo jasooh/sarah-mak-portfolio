@@ -95,6 +95,7 @@ content:
       - name: gallery
         label: Gallery
         type: object
+        description: Two or more images become a carousel on the project page, in this order.
         list:
           collapsible:
             collapsed: true

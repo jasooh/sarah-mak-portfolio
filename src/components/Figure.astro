@@ -9,6 +9,8 @@ interface Props {
   scale?: string;
   kind?: 'drawing' | 'photo';
   aspect?: string;
+  /** Pins the media to a fixed ratio, so a row of figures lines up. */
+  ratio?: string;
   sizes?: string;
   priority?: boolean;
   class?: string;
@@ -22,6 +24,7 @@ const {
   scale,
   kind = 'photo',
   aspect = '3 / 2',
+  ratio,
   sizes,
   priority = false,
   class: className = '',
@@ -32,17 +35,22 @@ const {
 
 <figure class={className}>
   <div class="frame bg-paper p-4">
-    <CmsImage
-      src={src}
-      alt={alt ?? caption ?? ''}
-      class:list={['w-full', kind === 'drawing' ? 'object-contain' : 'object-cover']}
-      aspect={aspect}
-      layout="full-width"
-      sizes={sizes}
-      priority={priority}
-      zoomable={zoomable}
-      label={kind === 'drawing' ? 'Drawing pending' : 'Image pending'}
-    />
+    <div class:list={[ratio && 'overflow-hidden']} style={ratio && `aspect-ratio: ${ratio}`}>
+      <CmsImage
+        src={src}
+        alt={alt ?? caption ?? ''}
+        class:list={[
+          ratio ? 'h-full w-full' : 'w-full',
+          kind === 'drawing' ? 'object-contain' : 'object-cover',
+        ]}
+        aspect={ratio ?? aspect}
+        layout="full-width"
+        sizes={sizes}
+        priority={priority}
+        zoomable={zoomable}
+        label={kind === 'drawing' ? 'Drawing pending' : 'Image pending'}
+      />
+    </div>
   </div>
 
   {

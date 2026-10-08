@@ -257,6 +257,82 @@
     transform: rotate(45deg);
   }
 
+  .carousel-track {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* Room for the frame's corner marks, which sit 4px outside it. */
+    padding: 4px;
+    margin: -4px;
+    scroll-padding-inline: 4px;
+  }
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+  /* Width follows from the shared media height and the plate's own ratio;
+     the 2rem is the frame's padding either side. */
+  .carousel-slide {
+    --media: clamp(15rem, 52vh, 30rem);
+    flex: 0 0 auto;
+    width: calc(var(--media) * var(--ratio, 3 / 2) + 2rem);
+    max-width: 100%;
+    scroll-snap-align: start;
+  }
+
+  .carousel-ticks {
+    display: flex;
+    align-items: center;
+  }
+  /* A scale bar rather than dots: hairline ticks, the current one struck tall. */
+  .carousel-tick {
+    display: block;
+    padding: 8px 5px;
+    cursor: pointer;
+  }
+  .carousel-tick::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 9px;
+    background-color: var(--line);
+    transition:
+      height var(--dur-fast) var(--ease-sharp),
+      background-color var(--dur-fast) var(--ease-sharp);
+  }
+  .carousel-tick[aria-current='true']::before {
+    height: 16px;
+    background-color: var(--accent);
+  }
+
+  .carousel-nav {
+    padding: 0.25rem 0.35rem;
+    font-size: 0.9375rem;
+    line-height: 1;
+    color: var(--muted);
+    transition: color var(--dur-fast) var(--ease-sharp);
+  }
+  .carousel-nav:hover:not(:disabled) {
+    color: var(--accent);
+  }
+  .carousel-nav:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  /* Nothing to scroll: the plates already fit side by side. */
+  .carousel.is-static .carousel-bar {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+      scroll-behavior: auto;
+    }
+  }
+
   /* Shown in place of a missing image: a blank sheet with the void mark on it. */
   .plate {
     position: relative;

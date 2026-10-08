@@ -3,7 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CmsImage from '../../components/CmsImage.astro';
-import Figure from '../../components/Figure.astro';
+import Gallery from '../../components/Gallery.astro';
 import { getProjects, projectNumber, type Project } from '../../lib/projects';
 
 interface Props {
@@ -151,21 +151,8 @@ const facts = [
 
     {
       gallery.length > 0 && (
-        <section class="mx-auto mt-20 max-w-6xl px-6 md:px-10">
-          <div class="grid gap-x-8 gap-y-14 sm:grid-cols-2">
-            {gallery.map((item, index) => (
-              <div data-reveal style={`--i: ${index % 2}`}>
-                <Figure
-                  src={item.image}
-                  caption={item.caption}
-                  alt={item.caption ?? title}
-                  scale={item.scale}
-                  kind={item.kind}
-                  sizes="(min-width: 640px) 50vw, 100vw"
-                />
-              </div>
-            ))}
-          </div>
+        <section data-reveal class="mx-auto mt-20 max-w-6xl px-6 md:px-10">
+          <Gallery items={gallery} title={title} />
         </section>
       )
     }

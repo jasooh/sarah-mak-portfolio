@@ -1,0 +1,172 @@
+---
+import Figure from './Figure.astro';
+import { resolveImage } from '../lib/images';
+import type { Project } from '../lib/projects';
+
+interface Props {
+  items: Project['data']['gallery'];
+  /** Falls back as alt text for a figure with no caption of its own. */
+  title: string;
+}
+
+const { items, title } = Astro.props;
+
+/* Slides share a height and keep their own proportion, so a portrait sheet
+   is not letterboxed into a landscape box. */
+const slides = items.map((item) => {
+  const image = resolveImage(item.image);
+  return { ...item, ratio: image ? `${image.width} / ${image.height}` : '3 / 2' };
+});
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+{
+  slides.length === 1 ? (
+    <Figure
+      src={slides[0].image}
+      caption={slides[0].caption}
+      alt={slides[0].caption ?? title}
+      scale={slides[0].scale}
+      kind={slides[0].kind}
+      ratio={slides[0].ratio}
+      sizes="(min-width: 1024px) 72rem, 100vw"
+    />
+  ) : (
+    <div class="carousel" data-carousel aria-roledescription="carousel" aria-label={`${title} gallery`}>
+      <div
+        class="carousel-track"
+        data-carousel-track
+        tabindex="0"
+        role="group"
+        aria-label={`${slides.length} images, scrollable`}
+      >
+        {slides.map((item, index) => (
+          <div class="carousel-slide" style={`--ratio: ${item.ratio}`}>
+            <Figure
+              src={item.image}
+              caption={item.caption}
+              alt={item.caption ?? title}
+              scale={item.scale}
+              kind={item.kind}
+              ratio={item.ratio}
+              sizes="(min-width: 768px) 60vw, 100vw"
+              priority={index === 0}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div class="carousel-bar rule-t mt-7 flex items-center justify-between gap-6 pt-4">
+        <ol class="carousel-ticks">
+          {slides.map((item, index) => (
+            <li>
+              <button
+                type="button"
+                class="carousel-tick"
+                data-carousel-to={index}
+                aria-current={index === 0 ? 'true' : 'false'}
+                aria-label={item.caption ?? `Image ${pad(index + 1)}`}
+              />
+            </li>
+          ))}
+        </ol>
+
+        <div class="flex items-center gap-4">
+          <p class="label" data-carousel-count aria-live="polite">
+            {pad(1)} / {pad(slides.length)}
+          </p>
+          <button type="button" class="carousel-nav" data-carousel-step="-1" aria-label="Previous image">
+            &#8592;
+          </button>
+          <button type="button" class="carousel-nav" data-carousel-step="1" aria-label="Next image">
+            &#8594;
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  function initCarousels() {
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+      if (root.dataset.bound) return;
+      root.dataset.bound = 'true';
+
+      const track = root.querySelector<HTMLElement>('[data-carousel-track]');
+      const count = root.querySelector<HTMLElement>('[data-carousel-count]');
+      if (!track) return;
+
+      const slides = Array.from(track.children) as HTMLElement[];
+      const ticks = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-carousel-to]'));
+      const steps = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-carousel-step]'));
+      const pad = (n: number) => String(n).padStart(2, '0');
+
+      let index = 0;
+      let pending = 0;
+
+      /* The last plates share the final screenful, so the track can run out of
+         scroll before the last one reaches the left edge. Position decides
+         what is current and what is reachable, not the index on its own. */
+      function sync() {
+        const max = track!.scrollWidth - track!.clientWidth;
+        const atStart = track!.scrollLeft <= 1;
+        const atEnd = track!.scrollLeft >= max - 1;
+
+        let nearest = 0;
+        let best = Infinity;
+        slides.forEach((slide, i) => {
+          const distance = Math.abs(slide.offsetLeft - track!.offsetLeft - track!.scrollLeft);
+          if (distance < best) {
+            best = distance;
+            nearest = i;
+          }
+        });
+
+        root.classList.toggle('is-static', max <= 1);
+        index = atEnd && max > 1 ? slides.length - 1 : nearest;
+        ticks.forEach((tick, i) => tick.setAttribute('aria-current', i === index ? 'true' : 'false'));
+        steps.forEach((button) => {
+          button.disabled = Number(button.dataset.carouselStep) < 0 ? atStart : atEnd;
+        });
+        if (count) count.textContent = `${pad(index + 1)} / ${pad(slides.length)}`;
+      }
+
+      function go(next: number) {
+        const clamped = Math.max(0, Math.min(slides.length - 1, next));
+        track!.scrollTo({
+          left: slides[clamped].offsetLeft - track!.offsetLeft,
+          behavior: still ? 'auto' : 'smooth',
+        });
+      }
+
+      ticks.forEach((tick) => tick.addEventListener('click', () => go(Number(tick.dataset.carouselTo))));
+      steps.forEach((button) =>
+        button.addEventListener('click', () => go(index + Number(button.dataset.carouselStep))),
+      );
+
+      track.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        go(index + (event.key === 'ArrowRight' ? 1 : -1));
+      });
+
+      function schedule() {
+        cancelAnimationFrame(pending);
+        pending = requestAnimationFrame(sync);
+      }
+
+      track.addEventListener('scroll', schedule, { passive: true });
+      new ResizeObserver(schedule).observe(track);
+
+      sync();
+    });
+  }
+
+  initCarousels();
+  document.addEventListener('astro:after-swap', initCarousels);
+  document.addEventListener('astro:page-load', initCarousels);
+</script>

@@ -38,6 +38,9 @@ Astro static site, Tailwind v4, content edited via Pages CMS (`.pages.yml`).
   a `Key: Value` metadata block (Typology/Location/Course/Completed/Instructor),
   captions of the form `Name (scale 1:150)`, and images marked `drawing`
   (hairline frame) or `photo` (bare). Keep new fields consistent with it.
+- A gallery of two or more images renders as a scroll-snap carousel
+  (`Gallery.astro`); one image stays a plain `Figure`. Slides share a height and
+  keep each image's own ratio, so don't force a uniform aspect on them.
 - Headings are lowercase italic (`.heading`); uppercase tracked `.label` is for
   site chrome only — nav, footer, counts.
 - `src/lib/frame.ts` holds the backdrop geometry. Both renderers read it: the
