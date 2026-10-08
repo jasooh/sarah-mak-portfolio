@@ -257,6 +257,46 @@
     transform: rotate(45deg);
   }
 
+  /* Shown in place of a missing image: a blank sheet with the void mark on it. */
+  .plate {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: var(--paper-sunk);
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        color-mix(in srgb, var(--line) 42%, transparent) 0 1px,
+        transparent 1px 32px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--line) 42%, transparent) 0 1px,
+        transparent 1px 32px
+      );
+  }
+  .plate-void {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .plate-void path {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+    opacity: 0.6;
+  }
+  .plate-label {
+    position: relative;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--paper);
+    text-align: center;
+    text-wrap: balance;
+  }
+
   .frame {
     position: relative;
     outline: 1px solid var(--line);

@@ -82,6 +82,7 @@ const facts = [
               sizes="(min-width: 1024px) 72rem, 100vw"
               priority
               zoomable
+              label={cover_kind === 'drawing' ? 'Drawing pending' : 'Image pending'}
               />
             </div>
           </div>
@@ -135,6 +136,7 @@ const facts = [
                 sizes="(min-width: 768px) 55vw, 100vw"
                 priority
                 zoomable
+                label={cover_kind === 'drawing' ? 'Drawing pending' : 'Image pending'}
                 />
               </div>
             </div>

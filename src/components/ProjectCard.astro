@@ -29,6 +29,7 @@ const meta = [completed, typology].filter(Boolean).join(' · ');
           layout="full-width"
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           priority={priority}
+          label={cover_kind === 'drawing' ? 'Drawing pending' : 'Image pending'}
         />
       </div>
     </div>

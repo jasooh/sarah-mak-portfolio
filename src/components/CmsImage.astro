@@ -12,6 +12,8 @@ interface Props {
   loading?: 'lazy' | 'eager';
   priority?: boolean;
   zoomable?: boolean;
+  /** Set on the void plate shown when there is no file to render. */
+  label?: string;
 }
 
 const {
@@ -24,6 +26,7 @@ const {
   loading,
   priority = false,
   zoomable = false,
+  label = 'Image pending',
 } = Astro.props;
 
 const image = resolveImage(src);
@@ -53,12 +56,12 @@ if (src && !image) {
       data-zoom-h={zoom?.attributes?.height ?? image.height}
     />
   ) : (
-    <div
-      class:list={['flex items-center justify-center bg-paper-sunk', className]}
-      style={`aspect-ratio: ${aspect}`}
-      aria-hidden="true"
-    >
-      <span class="label">Image</span>
+    <div class:list={['plate', className]} style={`aspect-ratio: ${aspect}`} aria-hidden="true">
+      {/* The drafting mark for a void panel, landing on the corners at any aspect. */}
+      <svg class="plate-void" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M0,0 L100,100 M100,0 L0,100" vector-effect="non-scaling-stroke" />
+      </svg>
+      {label && <span class="plate-label label">{label}</span>}
     </div>
   )
 }
