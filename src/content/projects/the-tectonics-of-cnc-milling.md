@@ -18,6 +18,9 @@ gallery:
   - image: /src/assets/media/teahouse-panels.png
     caption: Teahouse Panels
     kind: drawing
+  - image: /src/assets/media/teahouse-joints-1.png
+    caption: Teahouse Joinery
+    kind: drawing
 featured: true
 order: 5
 draft: false
