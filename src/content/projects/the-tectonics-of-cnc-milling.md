@@ -10,7 +10,7 @@ cover_kind: photo
 layout: side
 gallery:
   - image: /src/assets/media/tools.png
-    caption: Traditional Japanese carpentry tools
+    caption: Traditional Japanese Carpentry Tools
     kind: drawing
   - image: /src/assets/media/teahouse-jig.png
     caption: Flip-Mill Jig for the 3-Axis CNC Machine
