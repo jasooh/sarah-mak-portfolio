@@ -7,10 +7,13 @@ completed: May 2024
 instructor: Nicholas Hoban
 cover: /src/assets/media/title.png
 cover_kind: photo
+layout: side
 gallery:
   - image: /src/assets/media/tools.png
     caption: Traditional Japanese carpentry tools
     kind: drawing
+  - image: /src/assets/media/teahouse-jig.png
+    kind: photo
 featured: true
 order: 5
 draft: false
