@@ -14,7 +14,7 @@ gallery:
     kind: drawing
   - image: /src/assets/media/teahouse-jig.png
     caption: Flip-Mill Jig for the 3-Axis CNC Machine
-    kind: photo
+    kind: drawing
 featured: true
 order: 5
 draft: false
