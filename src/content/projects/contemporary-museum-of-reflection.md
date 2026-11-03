@@ -5,8 +5,8 @@ location: Milton, Ontario
 course: ARC1012 Design Studio II
 completed: May 2024
 instructor: Mauricio Quirós Pacheco
-cover: /src/assets/media/dsc02333.jpg
 cover_kind: photo
+layout: side
 featured: true
 order: 3
 draft: false
