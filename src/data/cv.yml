@@ -14,6 +14,12 @@ expertise:
     duration: 3 years
   - name: ArcGIS
     duration: 4 months
+  - name: CNC Milling
+    duration: 4 years
+  - name: Bambu Lab
+    duration: 2 years
+  - name: LaserCutting
+    duration: 5 years
 academic:
   - qualification: Bachelor of Arts, Architectural Studies
     institution: University of Toronto
